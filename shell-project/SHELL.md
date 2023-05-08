@@ -35,7 +35,7 @@ chmod +x aux.sh
 ```
 
 ## Step 4: Logging in to Server as a User
-After running the shell script on a Google Cloud instance (_instance-1_), I could log in as a different user--in this case, Olumide, one of the names inputed into the _names.csv_ file.
+After running the shell script on a Google Cloud instance (_instance-1_), I could log in as a different user--in this case, Olumide, one of the names inputted into the _names.csv_ file.
 ![google instance](gcloud.png)
 
 ![ssh login](login.png)
