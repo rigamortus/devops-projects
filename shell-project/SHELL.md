@@ -5,7 +5,7 @@ This task was to create 20 users on a remote server using shell script and add t
 First step was to generate RSA keys and save it in the directory used for the task.
 
 ```
-ssh-keygen -t rsa -f id_rsa
+ssh-keygen -t rsa -f /home/davidakalugo/shell/id_rsa
 ```
 ## Step 2: Creating a names.csv file
 A names.csv file including the names of the 20 users to be created on the server was also created.
