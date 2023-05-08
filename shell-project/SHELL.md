@@ -1,5 +1,5 @@
 # Creating Linux Users Using Shell Script
-This task was to create 20 users on a remote server using shell script and add them to the user group __developers__.
+This task was to create 20 users on a remote Linux (Ubuntu) server using shell script and add them to the user group __developers__.
 
 ## Step 1: Genrating RSA Key
 First step was to generate RSA keys and save it in the directory used for the task.
