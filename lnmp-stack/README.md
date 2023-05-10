@@ -1,5 +1,5 @@
 # Linux-Nginx-MySQL-PHP Stack
-This project was to display data entered into tables in a MySQL (relational) database.
+This project was to display data entered into tables in a MySQL (relational) database using Nginx and PHP.
 
 ## Step 1: Linux Instance
 A Linux virtual machine instance was spinned up on Microsoft Azure. Security groups rules were created to allow HTTP and HTTPs access on port 80 and 443 respectively, and SSH access on port 22 from my IP.
@@ -81,7 +81,7 @@ sudo unlink /etc/nginx/sites-enabled/default
 sudo systemctl reload nginx
 ```
 
-## Step 6: Installing and Configuring MySQL Server
+## Step 5: Installing and Configuring MySQL Server
 
 MySQL server was installed, a new user was created, a database and a table were created, and data was inserted into the table.
 
