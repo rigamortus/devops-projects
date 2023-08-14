@@ -1,0 +1,20 @@
+---
+ - name: Create a VPC
+   amazon.aws.ec2_vpc_net:
+     name: '{{ vpc_name }}'
+     cidr_block: '{{ vpc_cidr }}'
+     region: '{{ aws_region }}'
+     dns_support: true
+     dns_hostnames: true
+     state: present
+   register: my_vpc
+ - name: set vpc variable
+   shell: "echo 'vpc_id: {{ my_vpc.vpc.id }}' >> /home/ubuntu/host_vars/localhost/vars.yml"
+ 
+ - name: set fact
+   set_fact:
+     vpc_id: '{{ my_vpc.vpc.id }}'
+
+ - name: pause
+   pause:
+     seconds: 10

@@ -1,0 +1,3 @@
+[local]
+localhost
+remote-host ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/mykey

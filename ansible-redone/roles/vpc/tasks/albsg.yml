@@ -1,0 +1,23 @@
+---
+- name: example using security group rule descriptions
+  amazon.aws.ec2_security_group:
+    name: '{{ alb_name }}'
+    description: sg with rule descriptions
+    vpc_id: '{{ vpc_id }}'
+    region: '{{ aws_region }}'
+    rules:
+      - proto: tcp
+        ports:
+         - 80
+         - 443
+        cidr_ip: 0.0.0.0/0
+  register: alb_sg
+- name: set alb var
+  shell: |
+    echo 'alb_group_id: {{ alb_sg.group_id }}' >> /home/ubuntu/host_vars/localhost/vars.yml
+    echo 'alb_group_name: {{ alb_sg.group_name }}' >> /home/ubuntu/host_vars/localhost/vars.yml
+
+- name: set in-memory variable
+  set_fact:
+    alb_group_id: '{{ alb_sg.group_id }}'
+    alb_group_name: '{{ alb_sg.group_name }}'

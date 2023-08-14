@@ -1,0 +1,190 @@
+---
+- name: pause
+  pause:
+    seconds: 30
+
+- name: Wait for SSH to come up
+  wait_for:
+    host: '{{ ansible_host }}'
+    port: 22
+    delay: 15
+    timeout: 320
+
+- name: Update and upgrade apt packages
+  apt:
+    upgrade: yes
+    update_cache: yes
+    cache_valid_time: 86400
+- name: install necessary dependencies
+  package:
+    name: '{{ item }}'
+    state: present
+  loop:
+   - acl
+   - wget
+   - php8.1
+   - curl 
+   - git 
+   - php-mysql 
+   - php-xml 
+   - php-zip 
+   - php-mbstring 
+   - php-fpm 
+   - libapache2-mod-php 
+   - apt-transport-https 
+   - software-properties-common 
+   - gnupg 
+   - python3-psycopg2 
+   - python3-pip 
+   - python3-mysqldb 
+   - libmysqlclient-dev
+   - mysql-server
+   - mysql-client
+   - apache2
+
+- name: clone laravel project
+  git:
+    repo: https://github.com/f1amy/laravel-realworld-example-app.git
+    dest: /home/ubuntu/laravel_realworld
+    force: yes
+    accept_hostkey: yes
+
+- name: copy laravel app to destination server
+  copy:
+    src: /home/ubuntu/laravel_realworld
+    dest: /var/www/html
+    remote_src: true
+
+- name: ensure mysql service starts
+  service:
+    name: mysql
+    state: started
+    enabled: yes
+
+- name: create user
+  mysql_user: 
+    name: laravel
+    password: '{{ db_pass }}'
+    check_implicit_admin: yes
+    priv: '*.*:ALL'
+    host: '%'
+    state: present
+    
+- name: create database
+  mysql_db:
+    name: laravel
+    state: present
+    login_user: root
+    login_password: '{{ db_pass }}'
+
+- name: get composer
+  shell:  curl -sS https://getcomposer.org/installer | php
+
+- name: rename composer.phar to composer
+  copy: 
+    src: composer.phar 
+    dest: /usr/local/bin/composer
+    remote_src: true
+
+- name: make composer executable
+  file:
+    path: /usr/local/bin/composer
+    mode: a+x
+    state: file
+
+- name: remove default config
+  file:
+    name: /etc/apache2/sites-enabled/000-default.conf
+    state: absent
+
+- name: change laravel env 
+  copy:
+    src: /var/www/html/laravel_realworld/.env.example
+    dest: /var/www/html/laravel_realworld/.env
+    remote_src: true
+
+- name: Create non-root user
+  user:
+    name: ansible
+    state: present
+    shell: /bin/bash
+    createhome: yes 
+
+- name: give ansible necessary permissions
+  file:
+    path: /var/www/html/laravel_realworld
+    owner: ansible
+    state: directory
+
+- name: composer install dependencies
+  composer:
+    command: install
+    working_dir: /var/www/html/laravel_realworld
+  become_user: ansible
+  become: yes
+  become_method: sudo
+
+- name: change .env file
+  replace:
+    path: /var/www/html/laravel_realworld/.env
+    regexp: '{{ item.1 }}'
+    replace: '{{ item.2 }}'
+  with_items:
+        - { 1: '\DB_PORT.*', 2: 'DB_PORT=3306' }
+        - { 1: '\DB_USERNAME.*', 2: 'DB_USERNAME="laravel"' }
+        - { 1: '\DB_PASSWORD.*', 2: 'DB_PASSWORD="{{ db_pass }}"' }
+        - { 1: '\DB_DATABASE.*', 2: 'DB_DATABASE="laravel"' }
+        - { 1: '\DB_CONNECTION.*', 2: 'DB_CONNECTION="mysql"' }
+        - { 1: '\DB_HOST.*', 2: 'DB_HOST="127.0.0.1"' }
+
+- name: generate app key
+  shell: php artisan key:generate
+  args:
+    chdir: /var/www/html/laravel_realworld
+
+- name: run php artisan config:cache
+  shell: php artisan config:cache
+  args:
+    chdir: /var/www/html/laravel_realworld
+
+- name: run php artisan migrate
+  command: php artisan migrate
+  args:
+    chdir: /var/www/html/laravel_realworld
+
+- name: change group for laravel directory
+  file:
+    path: /var/www/html/laravel_realworld/
+    state: directory
+    group: www-data
+
+- name: change permissions for sub directory
+  file:
+    path: /var/www/html/laravel_realworld/storage
+    state: directory
+    mode: 'o=rwx'
+    recurse: yes
+
+- name: set default conf
+  template:
+    src: /home/ubuntu/roles/ec2-temp/templates/laravel_realworld.conf.j2
+    dest: /etc/apache2/sites-available/laravel_realworld.conf
+
+- name: update a2ensite
+  command: a2ensite laravel_realworld.conf
+
+- name: enable apache
+  command: a2enmod rewrite
+
+- name: restart apache
+  shell: systemctl restart apache2
+
+- name: Uncomment line from web.php
+  blockinfile:
+    path: /var/www/html/laravel_realworld/routes/web.php
+    state: present
+    insertafter: EOF
+    block: |
+        Route::get('/', function () {
+            return view('welcome');
+        });  

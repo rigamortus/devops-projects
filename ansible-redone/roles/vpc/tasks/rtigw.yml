@@ -1,0 +1,14 @@
+---
+- name: Set up public subnet route table
+  amazon.aws.ec2_vpc_route_table:
+    vpc_id: '{{ vpc_id }}'
+    region: '{{ aws_region }}'
+    tags:
+      Name: '{{ pub_rtb }}'
+    subnets:
+      - "{{ pub_01_subnet_id }}"
+      - "{{ pub_02_subnet_id }}"
+    routes:
+      - dest: 0.0.0.0/0
+        gateway_id: "{{ igw.gateway_id }}"
+  register: public_route_table

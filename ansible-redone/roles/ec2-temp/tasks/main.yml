@@ -1,0 +1,3 @@
+---
+# tasks file for ec2-temp
+- include_tasks: configure.yml

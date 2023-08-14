@@ -1,0 +1,23 @@
+---
+- name: first step
+  hosts: localhost
+  gather_facts: false
+  connection: local
+  roles:
+   - name: vpc
+     role: vpc
+
+- name: second step
+  hosts: remote-host
+  gather_facts: false
+  roles:
+   - name: template ec2
+     role: ec2-temp
+
+- name: final step
+  hosts: localhost 
+  gather_facts: false
+  connection: local
+  roles:
+   - name: asg
+     role: final

@@ -1,0 +1,21 @@
+---
+- name: example using security group rule descriptions
+  amazon.aws.ec2_security_group:
+    name: "{{ private_sg }}"
+    description: private sg
+    vpc_id: '{{ vpc_id }}'
+    region: '{{ aws_region }}'
+    rules:
+      - proto: tcp
+        ports:
+        - 80
+        - 443
+        group_name: '{{ alb_group_name }}'
+        rule_desc: allow alb on port 80 & 443
+  register: instance_sg
+- name: set instance_sg var
+  shell: "echo 'instance_security: {{ instance_sg.group_id }}' >> /home/ubuntu/host_vars/localhost/vars.yml"
+
+- name: pause
+  set_fact:
+    instance_security: '{{ instance_sg.group_id }}'

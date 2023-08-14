@@ -1,0 +1,48 @@
+- name: Create subnet for the task servers
+  amazon.aws.ec2_vpc_subnet:
+    state: present
+    region: '{{ aws_region }}'
+    vpc_id: '{{ vpc_id }}'
+    cidr: '{{ item.cidr }}'
+    az: '{{ item.az }}'
+    tags:
+      Name: '{{ item.subnet_name }}'
+  loop:
+   - { az: '{{ az1 }}', cidr: '{{ pubcidr1 }}', subnet_name: '{{ pubsubname1 }}'}
+   - { az: '{{ az2 }}', cidr: '{{ pubcidr2 }}', subnet_name: '{{ pubsubname2 }}'}
+   - { az: '{{ az1 }}', cidr: '{{ privcidr1 }}', subnet_name: '{{ privsubname1 }}'}
+   - { az: '{{ az2 }}', cidr: '{{ privcidr2 }}', subnet_name: '{{ privsubname2 }}'}
+- name: Gather facts about the subnets
+  amazon.aws.ec2_vpc_subnet_info:
+    region: '{{ aws_region }}'
+    filters:
+        "tag:Name":
+          - '{{ pubsubname1 }}'
+          - '{{ pubsubname2 }}'
+          - '{{ privsubname1 }}'
+          - '{{ privsubname2 }}'
+  register: subnets_info
+  tags: first
+
+- name: Get the subnet ids
+  set_fact:
+    priv_01_subnet_id: "{{ subnets_info|community.general.json_query(private_1)|join(\"\") }}"
+    priv_02_subnet_id: "{{ subnets_info|community.general.json_query(private_2)|join(\"\") }}"
+    pub_01_subnet_id: "{{ subnets_info|community.general.json_query(public_1)|join(\"\") }}"
+    pub_02_subnet_id: "{{ subnets_info|community.general.json_query(public_2)|join(\"\") }}"
+  vars:
+    private_1: "subnets[?tags.Name == '{{ privsubname1 }}'].id"
+    private_2: "subnets[?tags.Name == '{{ privsubname2 }}'].id"
+    public_1: "subnets[?tags.Name == '{{ pubsubname1 }}'].id"
+    public_2: "subnets[?tags.Name == '{{ pubsubname2 }}'].id"
+
+- name: echo subnet ids
+  shell: |
+    echo 'priv_01_subnet_id: {{ priv_01_subnet_id }}' >> /home/ubuntu/host_vars/localhost/vars.yml
+    echo 'priv_02_subnet_id: {{ priv_02_subnet_id }}' >> /home/ubuntu/host_vars/localhost/vars.yml
+    echo 'pub_01_subnet_id: {{ pub_01_subnet_id }}' >> /home/ubuntu/host_vars/localhost/vars.yml
+    echo 'pub_02_subnet_id: {{ priv_02_subnet_id }}' >> /home/ubuntu/host_vars/localhost/vars.yml
+
+- name: pause
+  pause:
+    seconds: 10

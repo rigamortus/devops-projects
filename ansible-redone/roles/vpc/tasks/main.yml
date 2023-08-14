@@ -1,0 +1,10 @@
+---
+- include_tasks: vpc.yml
+- include_tasks: subnets.yml
+- include_tasks: igw.yml
+- include_tasks: ngw.yml
+- include_tasks: rtigw.yml
+- include_tasks: rtngw.yml
+- include_tasks: albsg.yml
+- include_tasks: sg.yml
+- include_tasks: template.yml

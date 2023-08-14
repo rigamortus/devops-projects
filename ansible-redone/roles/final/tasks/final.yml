@@ -1,0 +1,244 @@
+---
+- name: check ami info
+  ec2_ami_info:
+    region: "{{ aws_region }}"
+    filters:
+      name: newtest
+  register: ami_info
+
+- name: Gather information about EC2 instance
+  ec2_instance_info:
+    region: '{{ aws_region }}'
+    filters:
+      "tag:Name": my-temp4
+  register: ec2_info
+
+- name: Use instance ID in subsequent task
+  set_fact:
+    inst_id: "{{ ec2_info.instances[0].instance_id }}"
+
+- name: Basic AMI Creation
+  amazon.aws.ec2_ami:
+    instance_id: '{{ inst_id }}'
+    region: '{{ aws_region }}'
+    wait: true
+    name: newtest2
+    tags:
+      Name: newtest2
+  register: my_ami
+    #when: ami_info.images|length < 0
+
+- debug:
+    var: ami_info
+
+- debug:
+    var: my_ami
+
+- name: set ami fact
+  set_fact:
+    my_ami_id: '{{ my_ami.image_id }}'
+
+- name: Create the launch template
+  community.aws.ec2_launch_template:
+    name: '{{ lt_name }}'
+    image_id: '{{ my_ami_id }}'
+    key_name: '{{ key_name }}'
+    instance_type: '{{ instance_type }}'
+    security_group_ids: '{{ instance_security }}'
+    region: '{{ aws_region }}'
+  register: launch_temp
+  tags: lt
+
+- name: store the launch template id
+  set_fact:
+    launch_temp_id: '{{ launch_temp.latest_template.launch_template_id }}'
+   
+- name: Create autoscaling group
+  community.aws.ec2_asg:
+    name: '{{ asg_name }}'
+    availability_zones: [ '{{ az1 }}', '{{ az2 }}' ]
+    launch_template:
+      launch_template_id: "{{ launch_temp_id }}"
+    min_size: 2
+    max_size: 5
+    desired_capacity: 2
+    vpc_zone_identifier: [ '{{ priv_01_subnet_id }}', '{{ priv_02_subnet_id }}' ]
+    health_check_type: ELB
+    health_check_period: 120
+    wait_for_instances: true
+    region: '{{ aws_region }}'
+  register: autosg   
+
+- name: store the instance id
+  set_fact:
+    asg_instance_id: '{{ autosg.instances }}'
+
+- name: Create a target group with instance targets
+  community.aws.elb_target_group:
+    name: '{{ tg_name }}'
+    protocol: http
+    port: 80
+    vpc_id: vpc-047c96b67b925478e
+    health_check_protocol: http
+    health_check_path: /
+    successful_response_codes: "200,250-260"
+    targets:
+      - Id: '{{ asg_instance_id[0] }}'
+        Port: 80
+      - Id: '{{ asg_instance_id[1] }}'
+        Port: 80
+    state: present
+    region: '{{aws_region }}'
+  register: target_group
+
+- name: store the target group name
+  set_fact:
+    tg_group_name: '{{ target_group.target_group_name }}'
+    tg_group_arn: '{{ target_group.target_group_arn }}'
+    cacheable: yes
+
+- name: create alb
+  amazon.aws.elb_application_lb:
+    name: '{{ alb_name }}'
+    security_groups:
+      - '{{ alb_group_id }}' 
+    subnets:
+      - '{{ pub_01_subnet_id }}'
+      - '{{ pub_02_subnet_id }}'
+    listeners:
+      - Protocol: HTTP
+        Port: 80
+        DefaultActions:
+          - Type: forward
+            TargetGroupName: '{{ tg_group_name }}'
+    state: present
+    region: '{{ aws_region }}'
+    wait: true
+    wait_timeout: 300
+  register: alb
+
+- name: set variables for alb
+  set_fact:
+    alb_dns: '{{ alb.dns_name }}'
+    alb_hosted_zone_id: '{{ alb.canonical_hosted_zone_id }}'
+
+- name: Add the target group to the autoscaling group
+  community.aws.ec2_asg:
+    name: '{{ asg_name }}'
+    target_group_arns: '{{ tg_group_arn }}'
+    region: '{{ aws_region }}'
+
+- name: Create route53 hosted zone
+  community.aws.route53_zone:
+    zone: '{{ domain }}'
+  register: hosted_zone_name
+  tags: route53
+
+- name: Create an alias record that points to the ALB
+  community.aws.route53:
+    state: present
+    hosted_zone_id: '{{ hosted_zone_name.zone_id }}'
+    record: '{{ subdomain }}'
+    type: A
+    overwrite: true
+    value: '{{ alb_dns }}'
+    alias: True
+    alias_hosted_zone_id: '{{ alb_hosted_zone_id }}'
+
+- name: get nameservers
+  community.aws.route53:
+    zone: '{{ domain }}'
+    record: '{{ subdomain }}'
+    type: A
+    state: get
+  register: nameserver
+  tags: route53
+
+- name: store the credentials 
+  set_fact:
+    nameservers_1: '{{ nameserver.nameservers }}'
+
+- name: display nameservers
+  debug:
+    msg: "Your nameserver is: {{ nameservers_1 }}"
+  tags: route53
+
+- name: Request a public certificate
+  shell: |
+      aws acm request-certificate \
+      --domain-name "{{ subdomain }}" \
+      --validation-method DNS \
+      --region "{{ aws_region }}" \
+      --domain-validation-options DomainName={{ subdomain }},ValidationDomain={{ domain }} \
+      --idempotency-token prevail
+  register: acm
+
+- set_fact:
+    certificate_arn: "{{ (acm.stdout|from_json).CertificateArn }}"
+    certificate_status: "PENDING_VALIDATION"
+
+- name: Wait for certificate DNS record to be made available
+  command: aws acm describe-certificate --certificate-arn {{ certificate_arn }} --region {{ aws_region }}
+  register: result
+  retries: 12
+  delay: 10
+  until: (result.stdout|from_json).Certificate.DomainValidationOptions[0].ResourceRecord.Name is defined
+
+- set_fact:
+    certificate_validation: "{{ (result.stdout|from_json).Certificate.DomainValidationOptions[0] }}"
+    
+- name: Create Route53 DNS record for the certificate
+  community.aws.route53:
+    state: present
+    zone: "{{ certificate_validation.ValidationDomain }}"
+    record: "{{ certificate_validation.ResourceRecord.Name }}"
+    type: "{{ certificate_validation.ResourceRecord.Type }}"
+    ttl: 7200
+    value: "{{ certificate_validation.ResourceRecord.Value }}"
+    wait: yes
+    overwrite: yes
+
+- name: Wait for certificate to be validated
+  command: aws acm describe-certificate --certificate-arn {{ certificate_arn }} --region {{ aws_region }}
+  register: result
+  retries: 180 # 30 mins. Hopefully it won't take this long!
+  delay: 10
+  until: (result.stdout|from_json).Certificate.Status == "ISSUED"
+
+- name: Update the ALB to redirect http traffic to https
+  community.aws.elb_application_lb:
+    name: '{{ alb_name }}'
+    region: '{{ aws_region }}'
+    security_groups: '{{ alb_group_id }}'
+    subnets:
+      - '{{ pub_01_subnet_id }}'
+      - '{{ pub_02_subnet_id }}'
+    listeners:
+      - Protocol: HTTPS
+        Port: 443
+        SslPolicy: ELBSecurityPolicy-2016-08
+        DefaultActions:
+          - Type: forward
+            TargetGroupName: '{{ tg_name }}'
+        Certificates:
+          - CertificateArn: '{{ certificate_arn }}'
+      - Protocol: HTTP
+        Port: 80
+        DefaultActions:
+          - Type: forward
+            TargetGroupName: '{{ tg_name }}'
+        Rules:
+          - Conditions:
+              - Field: path-pattern
+                Values: 
+                  - "/*"
+            Priority: '1'
+            Actions:
+              - Type: redirect
+                RedirectConfig:
+                  Protocol: "HTTPS"
+                  Port: "443"
+                  Host: "#{host}"
+                  Path: "/#{path}"
+                  Query: "#{query}"
+                  StatusCode: "HTTP_301"
