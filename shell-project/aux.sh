@@ -2,7 +2,7 @@
 groupadd developers
 for name in $(cat /home/ubuntu/shell/names.csv)
 do
-   if grep -Fxq "$name" $(cat /etc/passwd)
+   if grep -Fxq "$name" $(cat /etc/passwd) > /dev/null
    then
        break
    else
