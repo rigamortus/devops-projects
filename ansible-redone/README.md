@@ -1,4 +1,4 @@
-# Creating a Highly Available, Two-tier Laravel Web Application
+# Creating a Highly Available, Two-tier Laravel Web Application Using Ansible
 ## 1. Setting Up Ansible Controller
 An EC2 instance was used as the ansible controller for this task. An IAM role with the following policies was attached to the ansible controller EC2 instance:
 - AmazonVPCFullAccess
