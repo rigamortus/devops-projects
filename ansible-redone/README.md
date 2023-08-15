@@ -32,7 +32,7 @@ A __host_vars__ directory containing two subdirectories (__remote-host__ and __l
   ```
   ### VPC Role
   The VPC role had tasks that set up the following:
-  - A private VPC
+  - A VPC
   - Four subnets: two private and two public subnets each
   - An internet gateway to provide access to the internet for the public subnets
   - A NAT gateway to provide internet access for the private subnets
