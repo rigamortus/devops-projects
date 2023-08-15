@@ -25,7 +25,7 @@ The following packages were also installed on the Ansible controller:
 A __host_vars__ directory containing two subdirectories (__remote-host__ and __localhost__) was created. Each subdirectory had a __vars.yml__ file containing specified variables for the tasks run on each node.
 
 ## 3. Creating Roles
-  Three roles were used for this task: __VPC__, __EC2-Temp__ and Final. Each of these roles was created under the __roles__ directory using 
+  Three roles were used for this task: __VPC__, __EC2-Temp__ and __Final__. Each of these roles was created under the __roles__ directory using 
   the ansible-galaxy utility.
   ```
   mkdir roles
