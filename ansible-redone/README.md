@@ -6,7 +6,7 @@ An EC2 instance was used as the ansible controller for this task. An IAM role wi
 - AmazonRoute53FullAccess
 - AwsCertificateManagerFullAccess
 
-These policies were attached to ensure that the ansible-controller EC2 instance had full access to the AWS services used in this task. Using an EC2 instance in the target account where the application was to be set up also ensures that the Secret Access Keys and Account Keys weren't specified in the task.
+These policies were attached to ensure that the ansible-controller EC2 instance had full access to the AWS services used in this task. Using an EC2 instance in the target account where the application was to be set up also ensured that the Secret Access Keys and Account Keys weren't specified in the task.
 The following packages were also installed on the Ansible controller:
 - [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html)
 - Python3
@@ -22,7 +22,7 @@ The following packages were also installed on the Ansible controller:
 - [AWSCLI v2](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
 
 ## 2. Creating Inventory
-A __host_vars__ directory containing two subdirectories (__remote-host__ and __localhost__) was created. Each subdirectory had a __vars.yml__ file containing specified variables for the tasks run on each node.
+A __host_vars__ directory containing two subdirectories (__remote-host__ and __localhost__) was created. Each subdirectory had a __vars.yml__ file containing specified variables for the tasks ran on each node.
 
 ## 3. Creating Roles
   Three roles were used for this task: __VPC__, __EC2-Temp__ and __Final__. Each of these roles was created under the __roles__ directory using 
