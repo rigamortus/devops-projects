@@ -41,7 +41,7 @@ A __host_vars__ directory containing two subdirectories (__remote-host__ and __l
   - A security group for the private instances which allowed HTTP and HTTPs access only from the load balancer
   - A security group for the application load balancer that allows HTTP and HTTPs access from the internet
   - Creation of a template instance that was to be used to create the target AMI for our autoscaling group
-  - Import a private key generated on the ansible controller into AWS and attach it as the key for the newly created instance for SSH access
+  - Import a private key generated on the ansible controller into AWS and attach it as the key for the template instance for SSH access
     
   ### EC2-Temp Role
   The EC2-Temp role was run using the newly created instance that was created with the VPC role as the target. To run the role, first, the 
