@@ -66,7 +66,7 @@ A __host_vars__ directory containing two subdirectories (__remote-host__ and __l
 
   The project was run using the __ansible-playbook__ command.
   ```
-  ansible-playbook main.yml--ask-vault-password
+  ansible-playbook main.yml --ask-vault-password
   ```
   The final Laravel Application ran on the desired number of instances (2) and was served by an application load balancer with an SSL 
   certificate attached to redirect HTTP traffic to HTTPs.
