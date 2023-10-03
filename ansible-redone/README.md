@@ -50,7 +50,7 @@ A __host_vars__ directory containing two subdirectories (__remote-host__ and __l
   ansible-vault encrypt-string 'dbpassword' --name db_pass
   ```
   The vault-encrypted string __(db_pass)__ was inserted into the __vars.yml__ file under the __host_vars/remotehost/__ path.
-  The EC2- Temp role also did the following:
+  The EC2-Temp role also did the following:
   - Clone the target Git repository with the Laravel Application
   - Install necessary dependencies for the Laravel Application
   - Set up MySQL user and database for the Laravel Application
