@@ -62,7 +62,7 @@ A __host_vars__ directory containing two subdirectories (__remote-host__ and __l
    - Set up autoscaling and target groups
    - Created an application load balancer and attached it to the target instances created by the autoscaling group
    - Setup SSL certificate with ACM manager using Ansible shell module 
-   - Setup a Route 53 Hosted Zone (davidaltschool.me) with an Alias record pointing the desired sudomain (laravel.davidaltschool.me) to the application loadbalancer.
+   - Setup a Route 53 Hosted Zone (davidaltschool.me) with an Alias record pointing the desired subdomain (laravel.davidaltschool.me) to the application loadbalancer.
 
   The project was run using the __ansible-playbook__ command.
   ```
