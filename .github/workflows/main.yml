@@ -1,15 +1,14 @@
 name: Four-Stage Workflow
+on: [push]
 
-
-on:
-  push:
-    branches:
-      - main
+permissions:
+      id-token: write
+      contents: read
 
 jobs:
   terraform_stage_1:
     runs-on: ubuntu-latest
-    if: github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'skipped'
+    #if: github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'skipped'
 
     steps:
       - name: Checkout code
@@ -41,7 +40,7 @@ jobs:
 
   packer_stage_2:
     runs-on: ubuntu-latest
-    if: github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'skipped'
+    #if: github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'skipped'
     needs: terraform_stage_1
 
     steps:
@@ -62,7 +61,7 @@ jobs:
 
   terraform_stage_3:
     runs-on: ubuntu-latest
-    if: github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'skipped'
+    #if: github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'skipped'
     needs: packer_stage_2
 
     steps:
@@ -82,7 +81,7 @@ jobs:
 
   azure_cli_stage_4:
     runs-on: ubuntu-latest
-    if: github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'skipped'
+    #if: github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'skipped'
     needs: terraform_stage_3
 
     steps:
