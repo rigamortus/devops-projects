@@ -22,6 +22,17 @@ terraform {
   }
 }
 
+terraform {
+  cloud {
+    organization = "rigamortus"
+
+    workspaces {
+      name = "githubwork"
+    }
+    token = "uTCXvRtV0AMaWw.atlasv1.qcEuoSman6WMS9zuDeiPwckqhm3LitYwFCXwBG3jxdhtdSXR6gLZQXK3ittEkIzFSXo"
+  }
+}
+
 provider "azurerm" {
   #skip_provider_registration = true # This is only required when the User, Service Principal, or Identity running Terraform lacks the permissions to register Azure Resource Providers.
   features {}
