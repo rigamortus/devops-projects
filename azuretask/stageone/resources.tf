@@ -74,18 +74,18 @@ resource "azurerm_network_interface" "my-vmssnic" {
   }
 }
 
-resource "azurerm_network_interface" "my-vmnic" {
-  name                = "my-vmnic"
-  location            = azurerm_resource_group.my-f23-rg.location
-  resource_group_name = azurerm_resource_group.my-f23-rg.name
+#resource "azurerm_network_interface" "my-vmnic" {
+  #name                = "my-vmnic"
+  #location            = azurerm_resource_group.my-f23-rg.location
+  #resource_group_name = azurerm_resource_group.my-f23-rg.name
 
-  ip_configuration {
-    name                          = "my-ipc"
-    subnet_id                     = azurerm_subnet.my-sec-subnet.id
-    private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = azurerm_public_ip.vm-ip.id
-  }
-}
+  #ip_configuration {
+    #name                          = "my-ipc"
+    #subnet_id                     = azurerm_subnet.my-sec-subnet.id
+    #private_ip_address_allocation = "Dynamic"
+    #public_ip_address_id          = azurerm_public_ip.vm-ip.id
+  #}
+#}
 
 resource "azurerm_nat_gateway" "mynat" {
   name                = "my-natgw"
@@ -156,59 +156,59 @@ resource "azurerm_subnet_network_security_group_association" "agsubnet" {
   network_security_group_id = azurerm_network_security_group.my-security.id
 }
 
-resource "azurerm_network_interface_security_group_association" "example" {
-  network_interface_id      = azurerm_network_interface.my-vmnic.id
-  network_security_group_id = azurerm_network_security_group.my-security.id
-}
+#resource "azurerm_network_interface_security_group_association" "example" {
+  #network_interface_id      = azurerm_network_interface.my-vmnic.id
+  #network_security_group_id = azurerm_network_security_group.my-security.id
+#}
 
 resource "azurerm_network_interface_security_group_association" "tryexample" {
   network_interface_id      = azurerm_network_interface.my-vmssnic.id
   network_security_group_id = azurerm_network_security_group.my-security.id
 }
 
-resource "azurerm_windows_virtual_machine" "my-vm" {
-  name                  = "example-vm"
-  resource_group_name   = azurerm_resource_group.my-f23-rg.name
-  location              = azurerm_resource_group.my-f23-rg.location
-  size                  = "Standard_DS1_v2"
-  admin_username        = "azureuser"
-  admin_password        = var.vmpass
-  network_interface_ids = [azurerm_network_interface.my-vmnic.id]
+#resource "azurerm_windows_virtual_machine" "my-vm" {
+  #name                  = "example-vm"
+  #resource_group_name   = azurerm_resource_group.my-f23-rg.name
+  #location              = azurerm_resource_group.my-f23-rg.location
+  #size                  = "Standard_DS1_v2"
+  #admin_username        = "azureuser"
+  #admin_password        = var.vmpass
+  #network_interface_ids = [azurerm_network_interface.my-vmnic.id]
 
-  provision_vm_agent = true
+  #provision_vm_agent = true
 
-  os_disk {
-    caching              = "ReadWrite"
-    storage_account_type = "Standard_LRS"
-  }
+  #os_disk {
+    #caching              = "ReadWrite"
+    #storage_account_type = "Standard_LRS"
+  #}
 
-  source_image_reference {
-    publisher = "MicrosoftWindowsServer"
-    offer     = "WindowsServer"
-    sku       = "2019-Datacenter"
-    version   = "latest"
-  }
-}
+  #source_image_reference {
+    #publisher = "MicrosoftWindowsServer"
+    #offer     = "WindowsServer"
+    #sku       = "2019-Datacenter"
+    #version   = "latest"
+  #}
+#}
 
 # locals {
 #   script_content = file("${path.module}/webserver.ps1")
 # }
 
 
-resource "azurerm_virtual_machine_extension" "my-powershell" {
-  name                 = "runpowershellscript"
-  virtual_machine_id   = azurerm_windows_virtual_machine.my-vm.id
-  publisher            = "Microsoft.Compute"
-  type                 = "CustomScriptExtension"
-  type_handler_version = "1.10"
+#resource "azurerm_virtual_machine_extension" "my-powershell" {
+  #name                 = "runpowershellscript"
+  #virtual_machine_id   = azurerm_windows_virtual_machine.my-vm.id
+  #publisher            = "Microsoft.Compute"
+  #type                 = "CustomScriptExtension"
+  #type_handler_version = "1.10"
 
-  protected_settings = <<SETTINGS
-  {
-    "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -encodedCommand ${textencodebase64(file("~/devops-projects/azuretask/webserver.ps1"), "UTF-16LE")}"
-  }
-  SETTINGS
-  depends_on         = [azurerm_windows_virtual_machine.my-vm]
-}
+  #protected_settings = <<SETTINGS
+  #{
+    #"commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -encodedCommand ${textencodebase64(file("~/devops-projects/azuretask/webserver.ps1"), "UTF-16LE")}"
+  #}
+  #SETTINGS
+  #depends_on         = [azurerm_windows_virtual_machine.my-vm]
+#}
 
 # resource "null_resource" "deallocate" {
 #   provisioner "local-exec" {
@@ -349,7 +349,3 @@ resource "azurerm_shared_image" "my-shared-gallery" {
 
 # openssl pkcs12 -export -out mydavidcloudxyz.pfx -inkey mydavidcloud.pem -in mydavidcloudxyz.pem
 # openssl pkcs12 -export -out mydavidcloud.pfx -inkey app01.key -in app01.crt
-
-905e6623-5068-48e8-b5f5-94cd255e9253 client id
-9ju8Q~buDH8lolcK6WdZ2OcRwDSU29kBJ1mQlaS0 secret
-5b163a40-c860-4c31-b672-acc81df6d77a secret id
