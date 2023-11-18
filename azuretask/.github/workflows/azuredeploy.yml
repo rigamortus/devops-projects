@@ -1,0 +1,97 @@
+name: Four-Stage Workflow
+
+
+on:
+  workflow_run:
+    workflows: ["azure-workflow"]
+    types:
+      - manual
+  push:
+    branches:
+      - main
+
+jobs:
+  terraform_stage_1:
+    runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'skipped'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 0.15.5
+          
+      - name: Configure Azure Credentials
+        run: |
+          echo "az cloud set --name AzureCloud" >> $GITHUB_ENV
+          echo "az login --service-principal --tenant ${{ secrets.TENANT_ID }} --client-id ${{ secrets.CLIENT_ID }} --client-secret ${{ secrets.CLIENT_SECRET }}" >> $GITHUB_ENV
+
+      - name: Execute Terraform Stage 1
+        run: |
+          cd stageone
+          terraform init
+          terraform apply -auto-approve
+
+  packer_stage_2:
+    runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'skipped'
+    needs: terraform_stage_1
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Packer
+        run: |
+          wget https://releases.hashicorp.com/packer/1.7.5/packer_1.7.5_linux_amd64.zip
+          unzip packer_1.7.5_linux_amd64.zip
+          sudo mv packer /usr/local/bin/
+          rm packer_1.7.5_linux_amd64.zip
+
+      - name: Execute Packer Image Build
+        run: |
+          cd stagetwo
+          packer build your_packer_template.json
+
+  terraform_stage_3:
+    runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'skipped'
+    needs: packer_stage_2
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 0.15.5
+
+      - name: Execute Terraform Stage 3
+        run: |
+          cd stagethree
+          terraform init
+          terraform apply -auto-approve
+
+  azure_cli_stage_4:
+    runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'skipped'
+    needs: terraform_stage_3
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Azure CLI
+        uses: azure/setup-azure-cli@v1
+        with:
+          azcliversion: latest
+
+      - name: Execute Azure CLI Command
+        run: |
+          az login --service-principal --tenant ${{ secrets.TENANT_ID }} --client-id ${{ secrets.CLIENT_ID }} --secret ${{ secrets.CLIENT_SECRET }}
+          az vmss run-command invoke --name your_vmss_name --resource-group your_resource_group --command-id RunShellScript --scripts @scripts/your_powershell_script.ps1
+
