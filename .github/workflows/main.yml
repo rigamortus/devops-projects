@@ -2,10 +2,6 @@ name: Four-Stage Workflow
 
 
 on:
-  workflow_run:
-    workflows: ["azure-workflow"]
-    types:
-      - manual
   push:
     branches:
       - main
