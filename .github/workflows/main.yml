@@ -21,11 +21,19 @@ jobs:
           
       - name: login to azure 
         uses: azure/login@v1
-        with:
+        env:
             client-id: ${{ secrets.CLIENT_ID }}
             tenant-id: ${{ secrets.TENANT_ID }}
             subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
-            client-secret: ${{ secrets.CLIENT_SECRET}}
+            
+      - name: az login
+        env:
+           client-secret: ${{ secrets.CLIENT_SECRET }}
+           client-id: ${{ secrets.CLIENT_ID }}
+           tenant-id: ${{ secrets.TENANT_ID }}
+           subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
+        run: |
+          az login --service-principal --tenant ${{ secrets.TENANT_ID }} --client-id ${{ secrets.CLIENT_ID }} --client-secret ${{ secrets.CLIENT_SECRET }}
             
       - name: Execute Terraform Stage 1
         env:
