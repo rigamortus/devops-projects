@@ -60,7 +60,7 @@ jobs:
       - name: Execute Packer Image Build
         run: |
           cd azuretask/stagetwo
-          packer build your_packer_template.json
+          packer build azurepacker.json
 
   terraform_stage_3:
     runs-on: ubuntu-latest
