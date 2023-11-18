@@ -36,9 +36,10 @@ jobs:
          TF_VAR_subscription_id: ${{ secrets.SUBSCRIPTION_ID }}
          TF_VAR_tenant_id: ${{ secrets.TENANT_ID }}
          TF_VAR_vmpass: ${{ secrets.TF_VAR_VMPASS }}
+         creds: '{"clientId":"${{ secrets.CLIENT_ID }}","clientSecret":"${{ secrets.CLIENT_SECRET }}","subscriptionId":"${{ secrets.SUBSCRIPTION_ID }}","tenantId":"${{ secrets.TENANT_ID }}"}'
         run: |
           cd azuretask/stageone
-          terraform init
+          terraform init -backend-config=${creds}
           terraform apply -auto-approve
 
   packer_stage_2:
