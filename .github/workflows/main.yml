@@ -21,11 +21,11 @@ jobs:
           
       - name: Set Environment Variables
         run: |
-          echo "export CLIENT_ID=${{ secrets.CLIENT_ID }}" >> $GITHUB_ENV
-          echo "export CLIENT_SECRET=${{ secrets.CLIENT_SECRET }}" >> $GITHUB_ENV
-          echo "export SUBSCRIPTION_ID=${{ secrets.SUBSCRIPTION_ID }}" >> $GITHUB_ENV
-          echo "export TENANT_ID=${{ secrets.TENANT_ID }}" >> $GITHUB_ENV
-          echo "export TF_VAR_vmpass=${{ secrets.TF_VAR_VMPASS }}" >> $GITHUB_ENV
+          echo "CLIENT_ID=${{ secrets.CLIENT_ID }}" >> $GITHUB_ENV
+          echo "CLIENT_SECRET=${{ secrets.CLIENT_SECRET }}" >> $GITHUB_ENV
+          echo "SUBSCRIPTION_ID=${{ secrets.SUBSCRIPTION_ID }}" >> $GITHUB_ENV
+          echo "TENANT_ID=${{ secrets.TENANT_ID }}" >> $GITHUB_ENV
+          echo "TF_VAR_vmpass=${{ secrets.TF_VAR_VMPASS }}" >> $GITHUB_ENV
           
       - name: Configure Azure Credentials
         run: |
