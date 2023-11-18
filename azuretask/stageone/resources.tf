@@ -29,7 +29,7 @@ resource "azurerm_subnet" "third-subnet" {
   name                 = "third-subnet"
   resource_group_name  = azurerm_resource_group.my-f23-rg.name
   virtual_network_name = azurerm_virtual_network.my-network.name
-  address_prefixes     = 
+  address_prefixes     = var.thirdsubnetcidr
   # nat_gateway_id       = azurerm_nat_gateway.mynat.id
 }
 
