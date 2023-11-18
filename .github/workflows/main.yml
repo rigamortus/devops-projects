@@ -17,12 +17,7 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
         with:
-          terraform_version: 0.15.5
-          
-      - name: azure cli
-        uses: azure/setup-azure-cli@v1
-        with:
-          azcliversion: latest
+          terraform_version: 0.15.5  
           
       - name: login to azure 
         uses: azure/login@v1
