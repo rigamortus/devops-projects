@@ -24,10 +24,18 @@ jobs:
         with:
           terraform_version: 0.15.5
           
-      - name: Configure Azure Credentials
+      - name: Set Environment Variables
         run: |
-          echo "az cloud set --name AzureCloud" >> $GITHUB_ENV
-          echo "az login --service-principal --tenant ${{ secrets.TENANT_ID }} --client-id ${{ secrets.CLIENT_ID }} --client-secret ${{ secrets.CLIENT_SECRET }}" >> $GITHUB_ENV
+          echo "export CLIENT_ID=${{ secrets.CLIENT_ID }}" >> $GITHUB_ENV
+          echo "export CLIENT_SECRET=${{ secrets.CLIENT_SECRET }}" >> $GITHUB_ENV
+          echo "export SUBSCRIPTION_ID=${{ secrets.SUBSCRIPTION_ID }}" >> $GITHUB_ENV
+          echo "export TENANT_ID=${{ secrets.TENANT_ID }}" >> $GITHUB_ENV
+          echo "export TF_VAR_vmpass=${{ secrets.TF_VAR_VMPASS }}" >> $GITHUB_ENV
+          
+      #- name: Configure Azure Credentials
+        #run: |
+          #echo "az cloud set --name AzureCloud" >> $GITHUB_ENV
+          #echo "az login --service-principal --tenant ${{ secrets.TENANT_ID }} --client-id ${{ secrets.CLIENT_ID }} --client-secret ${{ secrets.CLIENT_SECRET }}" >> $GITHUB_ENV
 
       - name: Execute Terraform Stage 1
         run: |
