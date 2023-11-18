@@ -30,10 +30,10 @@ terraform {
 provider "azurerm" {
   #skip_provider_registration = true # This is only required when the User, Service Principal, or Identity running Terraform lacks the permissions to register Azure Resource Providers.
   features {}
-  client_id       = var.client_id
+  client_id       = "905e6623-5068-48e8-b5f5-94cd255e9253"
   client_secret   = var.client_secret
-  tenant_id       = var.tenant_id
-  subscription_id = var.subscription_id
+  tenant_id       = "03024f44-e3ad-4b2c-b85b-d1a744b0b70f"
+  subscription_id = "6ea6f9f7-0a28-45a1-b63d-c045d73026f2"
 }
 
 provider "acme" {
