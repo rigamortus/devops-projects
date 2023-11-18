@@ -32,9 +32,9 @@ provider "azurerm" {
 
 terraform {
   backend "azurerm" {
-    resource_group_name  = "cloud-shell-storage-westeurope"
-    storage_account_name = "csb10032002925b7d63"
-    container_name       = "tfstate"
+    resource_group_name  = "my-f23-rg"
+    storage_account_name = "tfstatemy12"
+    container_name       = "mytfgithub"
     key                  = "terraform.tfstate"
   }
 }
