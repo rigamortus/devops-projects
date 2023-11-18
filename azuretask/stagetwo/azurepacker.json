@@ -1,0 +1,61 @@
+{
+  "builders": [
+    {
+      "type": "azure-arm",
+
+      "client_id": "{{user `client_id`}}",
+      "client_secret": "{{user `client_secret`}}",
+      "tenant_id": "{{user `tenant_id`}}",
+      "subscription_id": "{{user `subscription_id`}}",
+
+      "managed_image_resource_group_name": "{{user `resource_group`}}",
+      "managed_image_name": "{{user `image_name`}}",
+      "location": "{{user `location`}}",
+
+      "os_type": "Windows",
+      "image_publisher": "MicrosoftWindowsServer",
+      "image_offer": "WindowsServer",
+      "image_sku": "2019-Datacenter",
+      "vm_size": "Standard_DS2_v2"
+    }
+  ],
+
+ "provisioners": [
+   {
+     "type": "powershell",
+     "inline": [
+      "# Install IIS",
+      "Install-WindowsFeature -name Web-Server -IncludeManagementTools",
+      "Start-Service W3SVC",
+      "Set-Service W3SVC -StartupType 'Automatic'",
+      "# Generate the HTML content",
+      "$htmlContent = @"
+      <!DOCTYPE html>
+      <html>
+      <head>
+      <title>VM Information</title>
+      </head>
+      <body>
+      <h1>VM Information</h1>
+      <p>My Name: David Akalugo</p>
+      <p>VM Name: %VM_NAME%</p>
+      <p>Location: %VM_LOCATION%</p>
+      </body>
+      </html>
+      "@",
+      "# Save the HTML content to a file",
+      "$htmlContent | Out-File -FilePath "C:\inetpub\wwwroot\iisstart.htm" -Force"
+     ]  
+   }
+ ],
+
+ "variables": {
+    "client_id": "{{env `CLIENT_ID`}}",
+    "client_secret": "{{env `CLIENT_SECRET`}}",
+    "tenant_id": "{{env `TENANT_ID`}}",
+    "subscription_id": "{{env `SUBSCRIPTION_ID`}}",
+    "resource_group": "my-f23-rg",
+    "location": "East US 2",
+    "image_name": "your-image-name"
+  }
+}
