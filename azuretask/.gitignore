@@ -1,0 +1,13 @@
+/home/vagrant/devops-projects/azuretask/app01.crt
+/home/vagrant/devops-projects/azuretask/app01.key
+/home/vagrant/devops-projects/azuretask/myapp01.key
+/home/vagrant/devops-projects/azuretask/myapp01.crt
+/home/vagrant/devops-projects/azuretask/myapp01.pem
+/home/vagrant/devops-projects/azuretask/mydavidcloud.pfx
+/home/vagrant/devops-projects/azuretask/terraform.tfstate
+/home/vagrant/devops-projects/azuretask/provider.tf
+/home/vagrant/devops-projects/azuretask/resources.tf
+/home/vagrant/devops-projects/azuretask/secondresources.tf
+/home/vagrant/devops-projects/azuretask/dns.tf
+/home/vagrant/devops-projects/azuretask/data.tf
+/home/vagrant/devops-projects/azuretask/variables.tf
