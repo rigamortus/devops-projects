@@ -29,7 +29,7 @@ jobs:
           
       - name: Configure Azure Credentials
         run: |
-          echo "az cloud set --name AzureCloud" >> $GITHUB_ENV
+          #echo "az cloud set --name AzureCloud" >> $GITHUB_ENV
           echo "az login --service-principal --tenant ${{ secrets.TENANT_ID }} --client-id ${{ secrets.CLIENT_ID }} --client-secret ${{ secrets.CLIENT_SECRET }}" >> $GITHUB_ENV
 
       - name: Execute Terraform Stage 1
