@@ -19,20 +19,26 @@ jobs:
         with:
           terraform_version: 0.15.5
           
-      - name: Set Environment Variables
-        run: |
-          echo "CLIENT_ID=${{ secrets.CLIENT_ID }}" >> $GITHUB_ENV
-          echo "CLIENT_SECRET=${{ secrets.CLIENT_SECRET }}" >> $GITHUB_ENV
-          echo "SUBSCRIPTION_ID=${{ secrets.SUBSCRIPTION_ID }}" >> $GITHUB_ENV
-          echo "TENANT_ID=${{ secrets.TENANT_ID }}" >> $GITHUB_ENV
-          echo "TF_VAR_vmpass=${{ secrets.TF_VAR_VMPASS }}" >> $GITHUB_ENV
+      - name: azure cli
+        uses: azure/setup-azure-cli@v1
+        with:
+          azcliversion: latest
           
-      - name: Configure Azure Credentials
-        run: |
-          #echo "az cloud set --name AzureCloud" >> $GITHUB_ENV
-          echo "az login --service-principal --tenant ${{ secrets.TENANT_ID }} --client-id ${{ secrets.CLIENT_ID }} --client-secret ${{ secrets.CLIENT_SECRET }}" >> $GITHUB_ENV
-
+      - name: login to azure 
+        uses: azure/login@v1
+        with:
+            client-id: ${{ secrets.CLIENT_ID }}
+            tenant-id: ${{ secrets.TENANT_ID }}
+            subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
+            client-secret: ${{ secrets.CLIENT_SECRET}}
+            
       - name: Execute Terraform Stage 1
+        env:
+         CLIENT_ID: ${{ secrets.CLIENT_ID }}
+         CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+         SUBSCRIPTION_ID: ${{ secrets.SUBSCRIPTION_ID }}
+         TENANT_ID: ${{ secrets.TENANT_ID }}
+         TF_VAR_vmpass: ${{ secrets.TF_VAR_VMPASS }}
         run: |
           cd azuretask/stageone
           terraform init
