@@ -20,13 +20,6 @@ terraform {
       version = "~> 2.0"
     }
   }
-
-  backend "azurerm" {
-    resource_group_name  = "cloud-shell-storage-westeurope"
-    storage_account_name = "csb10032002925b7d63"
-    container_name       = "tfstate"
-    key                  = "terraform.tfstate"
-  }
 }
 provider "azurerm" {
   #skip_provider_registration = true # This is only required when the User, Service Principal, or Identity running Terraform lacks the permissions to register Azure Resource Providers.
@@ -35,6 +28,15 @@ provider "azurerm" {
   client_secret   = var.client_secret
   tenant_id       = var.tenant_id
   subscription_id = var.subscription_id
+}
+
+terraform {
+  backend "azurerm" {
+    resource_group_name  = "cloud-shell-storage-westeurope"
+    storage_account_name = "csb10032002925b7d63"
+    container_name       = "tfstate"
+    key                  = "terraform.tfstate"
+  }
 }
 
 provider "acme" {
