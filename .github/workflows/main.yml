@@ -81,6 +81,7 @@ jobs:
         run: |
           cd azuretask/stagethree
           terraform init
+          terraform import azurerm_resource_group.my-f23-rg /subscriptions/6ea6f9f7-0a28-45a1-b63d-c045d73026f2/resourceGroups/my-f23-rg
           terraform apply -auto-approve
 
   azure_cli_stage_4:
