@@ -1,5 +1,5 @@
 resource "azurerm_resource_group" "my-f23-rg" {
-  name     = "my-f23-rg"
+  name     = "my-f22-rg"
   location = var.location
 }
 
