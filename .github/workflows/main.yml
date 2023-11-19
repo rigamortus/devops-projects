@@ -66,6 +66,8 @@ jobs:
       - name: Execute Packer Image Build
         run: |
           cd azuretask/stagetwo
+          packer plugins install github.com/hashicorp/azure
+          packer hcl2_upgrade /home/runner/work/devops-projects/devops-projects/azuretask/stagetwo/azurepacker.json
           packer build azurepacker.json
 
   terraform_stage_3:
