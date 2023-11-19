@@ -3,10 +3,10 @@
     {
       "type": "azure-arm",
 
-      "client_id": "{{user `client_id`}}",
-      "client_secret": "{{user `client_secret`}}",
-      "tenant_id": "{{user `tenant_id`}}",
-      "subscription_id": "{{user `subscription_id`}}",
+      "client_id": "{{user `ARM_SUBSCRIPTION_ID`}}",
+      "client_secret": "{{user `ARM_SUBSCRIPTION_ID`}}",
+      "tenant_id": "{{user `ARM_SUBSCRIPTION_ID`}}",
+      "subscription_id": "{{user `ARM_SUBSCRIPTION_ID`}}",
 
       "managed_image_resource_group_name": "{{user `resource_group`}}",
       "managed_image_name": "{{user `image_name`}}",
@@ -49,12 +49,12 @@
  ],
 
  "variables": {
-    "client_id": "{{env `CLIENT_ID`}}",
-    "client_secret": "{{env `CLIENT_SECRET`}}",
-    "tenant_id": "{{env `TENANT_ID`}}",
-    "subscription_id": "{{env `SUBSCRIPTION_ID`}}",
-    "resource_group": "my-f23-rg",
+    "client_id": "{{env `ARM_CLIENT_ID`}}",
+    "client_secret": "{{env `ARM_CLIENT_SECRET`}}",
+    "tenant_id": "{{env `ARM_TENANT_ID`}}",
+    "subscription_id": "{{env `ARM_SUBSCRIPTION_ID`}}",
+    "resource_group": "my-f22-rg",
     "location": "East US 2",
-    "image_name": "your-image-name"
+    "image_name": "my-image"
   }
 }
