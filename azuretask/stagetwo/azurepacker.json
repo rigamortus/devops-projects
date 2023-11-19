@@ -3,9 +3,9 @@
     {
       "type": "azure-arm",
 
-      "client_id": "{{user `ARM_SUBSCRIPTION_ID`}}",
-      "client_secret": "{{user `ARM_SUBSCRIPTION_ID`}}",
-      "tenant_id": "{{user `ARM_SUBSCRIPTION_ID`}}",
+      "client_id": "{{user `ARM_CLIENT_ID`}}",
+      "client_secret": "{{user `ARM_CLIENT_SECRET`}}",
+      "tenant_id": "{{user `ARM_TENANT_ID`}}",
       "subscription_id": "{{user `ARM_SUBSCRIPTION_ID`}}",
 
       "managed_image_resource_group_name": "{{user `resource_group`}}",
