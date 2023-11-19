@@ -29,7 +29,7 @@
       "Start-Service W3SVC",
       "Set-Service W3SVC -StartupType 'Automatic'",
       "# Generate the HTML content",
-      "$htmlContent = @"
+      "$htmlContent = @'",
       '<!DOCTYPE html>',
       '<html>',
       '<head>',
