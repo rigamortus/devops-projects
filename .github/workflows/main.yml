@@ -39,7 +39,7 @@ jobs:
          #creds: '{client_id:"${{ secrets.CLIENT_ID }}","client_secret:"${{ secrets.CLIENT_SECRET }}",subscription_id:"${{ secrets.SUBSCRIPTION_ID }}","tenantId":"${{ secrets.TENANT_ID }}"}'
         run: |
           cd azuretask/stageone
-          terraform init -backend-config="ARM_SUBSCRIPTION_ID=${{ secrets.ARM_SUBSCRIPTION_ID }}" -backend-config="ARM_CLIENT_ID=${{ secrets.ARM_CLIENT_ID }}" -backend-config="ARM_TENANT_ID=${{ secrets.ARM_TENANT_ID }}" -backend-config="ARM_CLIENT_SECRET=${{ secrets.ARM_CLIENT_SECRET }}"
+          terraform init -backend-config="subscriptionId=${{ secrets.ARM_SUBSCRIPTION_ID }}" -backend-config="clientId=${{ secrets.ARM_CLIENT_ID }}" -backend-config="tenantId=${{ secrets.ARM_TENANT_ID }}" -backend-config="clientSecret=${{ secrets.ARM_CLIENT_SECRET }}"
           terraform apply -auto-approve
 
   packer_stage_2:
