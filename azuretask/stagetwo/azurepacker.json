@@ -3,10 +3,10 @@
     {
       "type": "azure-arm",
 
-      "client_id": "{{env `ARM_SUBSCRIPTION_ID`}}",
-      "client_secret": "{{env `ARM_SUBSCRIPTION_ID`}}",
-      "tenant_id": "{{env `ARM_SUBSCRIPTION_ID`}}",
-      "subscription_id": "{{env `ARM_SUBSCRIPTION_ID`}}",
+      "client_id": "{{user `ARM_SUBSCRIPTION_ID`}}",
+      "client_secret": "{{user `ARM_SUBSCRIPTION_ID`}}",
+      "tenant_id": "{{user `ARM_SUBSCRIPTION_ID`}}",
+      "subscription_id": "{{user `ARM_SUBSCRIPTION_ID`}}",
 
       "managed_image_resource_group_name": "{{user `resource_group`}}",
       "managed_image_name": "{{user `image_name`}}",
