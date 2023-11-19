@@ -30,19 +30,19 @@
       "Set-Service W3SVC -StartupType 'Automatic'",
       "# Generate the HTML content",
       "$htmlContent = @"
-      <!DOCTYPE html>
-      <html>
-      <head>
-      <title>VM Information</title>
-      </head>
-      <body>
-      <h1>VM Information</h1>
-      <p>My Name: David Akalugo</p>
-      <p>VM Name: %VM_NAME%</p>
-      <p>Location: %VM_LOCATION%</p>
-      </body>
-      </html>
-      "@",
+      '<!DOCTYPE html>',
+      '<html>',
+      '<head>',
+      '<title>VM Information</title>',
+      '</head>',
+      '<body>',
+      '<h1>VM Information</h1>',
+      '<p>My Name: David Akalugo</p>',
+      '<p>VM Name: %VM_NAME%</p>',
+      '<p>Location: %VM_LOCATION%</p>',
+      '</body>',
+      '</html>',
+      "'@",
       "# Save the HTML content to a file",
       "$htmlContent | Out-File -FilePath "C:\inetpub\wwwroot\iisstart.htm" -Force"
      ]  
