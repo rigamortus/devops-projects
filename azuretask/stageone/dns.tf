@@ -105,7 +105,7 @@ resource "azurerm_user_assigned_identity" "identity" {
 
 #Create a Key Vault and import the SSL certificates
 resource "azurerm_key_vault" "kv" {
-  name                        = "benmykv"
+  name                        = "newmykv"
   resource_group_name         = azurerm_resource_group.my-f23-rg.name
   location                    = azurerm_resource_group.my-f23-rg.location
   sku_name                    = "standard"
