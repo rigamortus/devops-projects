@@ -49,7 +49,10 @@
       "$htmlContent += '</body>'",
       "$htmlContent += '</html>'",
       "# Save the HTML content to a file",
-      "$htmlContent -join [System.Environment]::NewLine | Out-File -FilePath 'C:\\inetpub\\wwwroot\\iisstart.htm' -Force"
+      "$htmlContent -join [System.Environment]::NewLine | Out-File -FilePath 'C:\\inetpub\\wwwroot\\iisstart.htm' -Force",
+      "# Run sysprep to generalize the Windows OS",
+      "$sysprepPath = Join-Path $env:SystemRoot "System32\Sysprep\sysprep.exe"",
+      "Start-Process -FilePath $sysprepPath -ArgumentList "/generalize", "/oobe", "/shutdown" "/mode:vm" -Wait"
      ]  
    }
  ],
