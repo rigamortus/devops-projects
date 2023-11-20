@@ -127,15 +127,15 @@ resource "azurerm_application_gateway" "agw" {
 # }
 resource "azurerm_user_assigned_identity" "identity" {
   name                = "example-identity"
-  resource_group_name = azurerm_resource_group.my-f23-rg.name
-  location            = azurerm_resource_group.my-f23-rg.location
+  resource_group_name = data.azurerm_resource_group.my-f23-rg.name
+  location            = data.azurerm_resource_group.my-f23-rg.location
 }
 
 #Create a Key Vault and import the SSL certificates
 resource "azurerm_key_vault" "kv" {
   name                        = "benmykv"
-  resource_group_name         = azurerm_resource_group.my-f23-rg.name
-  location                    = azurerm_resource_group.my-f23-rg.location
+  resource_group_name         = data.azurerm_resource_group.my-f23-rg.name
+  location                    = data.azurerm_resource_group.my-f23-rg.location
   sku_name                    = "standard"
   tenant_id                   = data.azurerm_client_config.current.tenant_id
   enabled_for_disk_encryption = true
@@ -236,7 +236,7 @@ resource "azurerm_key_vault_access_policy" "identity_key_vault_access_policy" {
 
 resource "azurerm_dns_zone" "my-public-dns" {
   name                = "mydavidcloud.xyz"
-  resource_group_name = azurerm_resource_group.my-f23-rg.name
+  resource_group_name = data.azurerm_resource_group.my-f23-rg.name
 }
 
 resource "azurerm_dns_cname_record" "example" {
