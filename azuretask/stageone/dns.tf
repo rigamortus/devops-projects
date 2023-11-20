@@ -256,7 +256,7 @@ resource "azurerm_key_vault_certificate" "certificate" {
   depends_on   = [azurerm_key_vault_access_policy.key_vault_default_policy]
 
   certificate {
-    contents = filebase64("./mydavidcloud.pfx")
+    contents = filebase64("../stagethree/davidcloud.pfx")
     password = var.vmpass
   }
 
