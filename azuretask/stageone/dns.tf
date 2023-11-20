@@ -262,7 +262,7 @@ resource "azurerm_key_vault_certificate" "certificate" {
 
   certificate_policy {
     issuer_parameters {
-      name = "OpenSSL"
+      name = "Unknown"
     }
 
     key_properties {
