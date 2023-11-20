@@ -28,6 +28,22 @@ data "azurerm_public_ip" "example" {
 data "azurerm_resource_group" "my-f23-rg" {
   name = "my-f22-rg"
 }
+
+data "azurerm_subnet" "third-subnet" {
+  name                 = "third-subnet"
+  virtual_network_name = "my-network"
+  resource_group_name  = "my-f22-rg"
+}
+
+data "azurerm_network_security_group" "my-security" {
+  name                = "acceptanceTestSecurityGroup1"
+  resource_group_name = my-f22-rg
+}
+
+data "azurerm_application_gateway" "agw"
+  name                = "my-agw"
+  resource_group_name = "my-f22-rg"
+}
 # data "azurerm_key_vault" "kv" {
 #   name                = "benmykv"
 #   resource_group_name = "my-f23-rg"
