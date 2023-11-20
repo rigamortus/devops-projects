@@ -20,6 +20,9 @@ data "azurerm_image" "search" {
   resource_group_name = "my-f22-rg"
 }
 
+data "azurerm_resource_group" "my-f23-rg" {
+  name = "my-f22-rg"
+}
 # data "azurerm_key_vault" "kv" {
 #   name                = "benmykv"
 #   resource_group_name = "my-f23-rg"
