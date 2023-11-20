@@ -20,21 +20,21 @@ resource "azurerm_windows_virtual_machine_scale_set" "my-scale-set" {
   network_interface {
     name                      = "my-net-profile"
     primary                   = true
-    network_security_group_id = azurerm_network_security_group.my-security.id
+    network_security_group_id = data.azurerm_network_security_group.my-security.id
 
     ip_configuration {
       name                                         = "internal"
       primary                                      = true
-      subnet_id                                    = azurerm_subnet.third-subnet.id
-      application_gateway_backend_address_pool_ids = azurerm_application_gateway.agw.backend_address_pool[*].id
+      subnet_id                                    = data.azurerm_subnet.third-subnet.id
+      application_gateway_backend_address_pool_ids = data.azurerm_application_gateway.agw.backend_address_pool[*].id
     }
   }
 }
 
 resource "azurerm_monitor_autoscale_setting" "autoscale" {
   name                = "autoscale"
-  location            = azurerm_resource_group.my-f23-rg.location
-  resource_group_name = azurerm_resource_group.my-f23-rg.name
+  location            = data.azurerm_resource_group.my-f23-rg.location
+  resource_group_name = data.azurerm_resource_group.my-f23-rg.name
   target_resource_id  = azurerm_windows_virtual_machine_scale_set.my-scale-set.id
   enabled             = true
   profile {
