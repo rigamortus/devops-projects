@@ -102,8 +102,8 @@ jobs:
           pwd
           packer plugins install github.com/hashicorp/azure
           #packer hcl2_upgrade /home/runner/work/devops-projects/devops-projects/azuretask/stagetwo/azurepacker.json
-          packer hcl2_upgrade D:\a\devops-projects\devops-projects\azuretask\stagetwo\azurepacker.json
-          packer build D:\a\devops-projects\devops-projects\azuretask\stagetwo\azurepacker.json
+          packer hcl2_upgrade C:\actions-runner\_work\devops-projects\devops-projects\azuretask\stagetwo\azurepacker.json
+          packer build C:\actions-runner\_work\devops-projects\azuretask\stagetwo\azurepacker.json
 
   terraform_stage_3:
     runs-on: ubuntu-latest
