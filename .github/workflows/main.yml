@@ -80,11 +80,11 @@ jobs:
           ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
           ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
         run: |
-          cd /home/runner/work/devops-projects/devops-projects/azuretask/stagetwo
+          cd azuretask/stagetwo
           packer plugins install github.com/hashicorp/azure
-          packer hcl2_upgrade /home/runner/work/devops-projects/devops-projects/azuretask/stagetwo/azurepacker.json
+          packer hcl2_upgrade azurepacker.json
           #packer hcl2_upgrade C:\Users\runner\work\devops-projects\devops-projects\azuretask\stagetwo\azurepacker.json
-          packer build /home/runner/work/devops-projects/devops-projects/azuretask/stagetwo/azurepacker.json
+          packer build azurepacker.json
 
   terraform_stage_3:
     runs-on: ubuntu-latest
