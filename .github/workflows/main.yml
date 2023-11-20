@@ -42,20 +42,20 @@ jobs:
           terraform init -backend-config="subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}" -backend-config="client_id=${{ secrets.ARM_CLIENT_ID }}" -backend-config="tenant_id=${{ secrets.ARM_TENANT_ID }}" -backend-config="client_secret=${{ secrets.ARM_CLIENT_SECRET }}"
           terraform apply -auto-approve
 
-  packer_stage_2:
-    runs-on: ubuntu-latest
+  #packer_stage_2:
+    #runs-on: ubuntu-latest
     #if: github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'skipped'
-    needs: terraform_stage_1
+    #needs: terraform_stage_1
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+    #steps:
+      #- name: Checkout code
+        #uses: actions/checkout@v2
       
-      - name: azure login
-        uses: azure/login@v1
-        with:
-          creds: '{"clientId":"${{ secrets.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}","subscriptionId":"${{ secrets.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.ARM_TENANT_ID }}"}'
-          allow-no-subscriptions: true
+      #- name: azure login
+        #uses: azure/login@v1
+        #with:
+          #creds: '{"clientId":"${{ secrets.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}","subscriptionId":"${{ secrets.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.ARM_TENANT_ID }}"}'
+          #allow-no-subscriptions: true
 
       #- name: change directory  
         #run: |
@@ -66,29 +66,29 @@ jobs:
             #ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
             #ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
 
-      - name: Setup Packer
-        run: |
-          wget https://releases.hashicorp.com/packer/1.9.4/packer_1.9.4_linux_amd64.zip
-          unzip packer_1.9.4_linux_amd64.zip
-          sudo mv packer /usr/local/bin/
-          rm packer_1.9.4_linux_amd64.zip
-      - name: Execute Packer Image Build
-        env:
-          ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
-          ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
-          ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
-          ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
-        run: |
-          cd azuretask/stagetwo
-          packer plugins install github.com/hashicorp/azure
+      #- name: Setup Packer
+        #run: |
+          #wget https://releases.hashicorp.com/packer/1.9.4/packer_1.9.4_linux_amd64.zip
+          #unzip packer_1.9.4_linux_amd64.zip
+          #sudo mv packer /usr/local/bin/
+          #rm packer_1.9.4_linux_amd64.zip
+      #- name: Execute Packer Image Build
+        #env:
+          #ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+          #ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+          #ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+          #ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+        #run: |
+          #cd azuretask/stagetwo
+          #packer plugins install github.com/hashicorp/azure
           #packer hcl2_upgrade azurepacker.json
           #packer hcl2_upgrade C:\Users\runner\work\devops-projects\devops-projects\azuretask\stagetwo\azurepacker.json
-          packer build azurepacker.json
+          #packer build azurepacker.json
 
   terraform_stage_3:
     runs-on: ubuntu-latest
     #if: github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'skipped'
-    needs: packer_stage_2
+    needs: terraform_stage_1
 
     steps:
       - name: Checkout code
@@ -103,7 +103,7 @@ jobs:
         run: |
           cd azuretask/stagethree
           terraform init
-          terraform import azurerm_resource_group.my-f23-rg /subscriptions/6ea6f9f7-0a28-45a1-b63d-c045d73026f2/resourceGroups/my-f23-rg
+          #terraform import azurerm_resource_group.my-f23-rg /subscriptions/6ea6f9f7-0a28-45a1-b63d-c045d73026f2/resourceGroups/my-f23-rg
           terraform apply -auto-approve
 
   azure_cli_stage_4:
