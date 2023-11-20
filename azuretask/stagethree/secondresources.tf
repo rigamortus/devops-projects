@@ -64,7 +64,7 @@ resource "random_string" "azurerm_traffic_manager_profile_dns_config" {
 
 resource "azurerm_traffic_manager_profile" "my-traffic" {
   name                   = random_string.myrandom.result
-  resource_group_name    = azurerm_resource_group.my-f23-rg.name
+  resource_group_name    = data.azurerm_resource_group.my-f23-rg.name
   traffic_routing_method = "Geographic"
 
   dns_config {
