@@ -43,7 +43,7 @@ jobs:
           terraform apply -auto-approve
 
   packer_stage_2:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     #if: github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'skipped'
     needs: terraform_stage_1
 
@@ -66,11 +66,28 @@ jobs:
             ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
 
       - name: Setup Packer
+        shell: powershell
         run: |
-          wget https://releases.hashicorp.com/packer/1.9.4/packer_1.9.4_linux_amd64.zip
-          unzip packer_1.9.4_linux_amd64.zip
-          sudo mv packer /usr/local/bin/
-          rm packer_1.9.4_linux_amd64.zip
+          #wget https://releases.hashicorp.com/packer/1.9.4/packer_1.9.4_linux_amd64.zip
+          #unzip packer_1.9.4_linux_amd64.zip
+          #sudo mv packer /usr/local/bin/
+          #rm packer_1.9.4_linux_amd64.zip
+          # Define Packer version
+          $packerVersion = "1.9.4"
+    
+          # Define download URL
+          $packerUrl = "https://releases.hashicorp.com/packer/$($packerVersion)/packer_$($packerVersion)_windows_amd64.zip"
+    
+          # Download and unzip Packer
+          Invoke-WebRequest -Uri $packerUrl -OutFile packer.zip
+          Expand-Archive -Path packer.zip -DestinationPath $Env:ProgramFiles\packer -Force
+          Remove-Item -Path packer.zip -Force
+    
+          # Add Packer to the system PATH
+          $env:Path += ";$($Env:ProgramFiles)\packer"
+
+          # Check Packer version
+          packer --version
 
       - name: Execute Packer Image Build
         env:
