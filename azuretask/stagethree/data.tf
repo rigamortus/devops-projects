@@ -20,6 +20,11 @@ data "azurerm_image" "search" {
   resource_group_name = "my-f22-rg"
 }
 
+data "azurerm_public_ip" "example" {
+  name                = "my-agw-ip"
+  resource_group_name = "my-f22-rg"
+}
+
 data "azurerm_resource_group" "my-f23-rg" {
   name = "my-f22-rg"
 }
