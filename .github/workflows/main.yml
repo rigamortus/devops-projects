@@ -48,10 +48,10 @@ jobs:
     needs: terraform_stage_1
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-        with:
-          path: azuretask/stagetwo
+      #- name: Checkout code
+        #uses: actions/checkout@v2
+        #with:
+          #path: azuretask/stagetwo
       
       #- name: azure login
         #uses: azure/login@v1
@@ -99,6 +99,7 @@ jobs:
           ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
         run: |
           #cd azuretask/stagetwo
+          pwd
           packer plugins install github.com/hashicorp/azure
           packer hcl2_upgrade /home/runner/work/devops-projects/devops-projects/azuretask/stagetwo/azurepacker.json
           packer build azurepacker.json
