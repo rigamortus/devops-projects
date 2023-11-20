@@ -8,8 +8,8 @@ resource "azurerm_windows_virtual_machine_scale_set" "my-scale-set" {
   admin_username      = "azureuser"
   admin_password      = var.vmpass
   secure_boot_enabled = false
-  source_image_id     = "/subscriptions/6ea6f9f7-0a28-45a1-b63d-c045d73026f2/resourceGroups/my-f23-rg/providers/Microsoft.Compute/galleries/my_gallery/images/my-template/versions/0.0.2"
-  #source_image_id = azurerm_shared_image_version.try.id
+  #source_image_id     = #"/subscriptions/6ea6f9f7-0a28-45a1-b63d-c045d73026f2/resourceGroups/my-f23-rg/providers/Microsoft.Compute/galleries/my_gallery/images/my-template/versions/0.0.2"
+  source_image_id = data.azurerm_image.search.id
 
 
   os_disk {
