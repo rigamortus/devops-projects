@@ -16,7 +16,7 @@
       "winrm_use_ssl": true,
       "winrm_insecure": true,
       "winrm_timeout": "5m",
-      "winrm_username": "packer"
+      "winrm_username": "packer",
 
       "os_type": "Windows",
       "image_publisher": "MicrosoftWindowsServer",
