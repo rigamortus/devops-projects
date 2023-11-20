@@ -1,7 +1,7 @@
 resource "azurerm_windows_virtual_machine_scale_set" "my-scale-set" {
   name                = "my-vmss"
-  resource_group_name = azurerm_resource_group.my-f23-rg.name
-  location            = azurerm_resource_group.my-f23-rg.location
+  resource_group_name = data.azurerm_resource_group.my-f23-rg.name
+  location            = data.azurerm_resource_group.my-f23-rg.location
   sku                 = "Standard_DS1_v2"
   # generation          = 2
   instances           = 2
