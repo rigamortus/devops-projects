@@ -52,7 +52,6 @@
       "$htmlContent -join [System.Environment]::NewLine | Out-File -FilePath 'C:\\inetpub\\wwwroot\\iisstart.htm' -Force",
       "$env:SystemRoot\\System32\\Sysprep\\sysprep.exe /generalize /oobe /mode:vm /shutdown -Wait"
      ],
-     "script": "../webserver.ps1"
    }
  ],
 
