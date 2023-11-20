@@ -105,9 +105,9 @@ jobs:
           creds: '{"clientId":"${{ secrets.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}","subscriptionId":"${{ secrets.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.ARM_TENANT_ID }}"}'
           allow-no-subscriptions: true
         env:
-            client_id: ${{ secrets.CLIENT_ID }}
-            tenant_id: ${{ secrets.TENANT_ID }}
-            subscription_id: ${{ secrets.SUBSCRIPTION_ID }}
+            client_id: ${{ secrets.ARM_CLIENT_ID }}
+            tenant_id: ${{ secrets.ARM_TENANT_ID }}
+            subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
 
       - name: Execute Terraform Stage 3
         env:
@@ -118,7 +118,7 @@ jobs:
          TF_VAR_vmpass: ${{ secrets.TF_VAR_VMPASS }}
         run: |
           cd azuretask/stagethree
-          terraform init
+          terraform init -backend-config="subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}" -backend-config="client_id=${{ secrets.ARM_CLIENT_ID }}" -backend-config="tenant_id=${{ secrets.ARM_TENANT_ID }}" -backend-config="client_secret=${{ secrets.ARM_CLIENT_SECRET }}"
           #terraform import azurerm_resource_group.my-f23-rg /subscriptions/6ea6f9f7-0a28-45a1-b63d-c045d73026f2/resourceGroups/my-f23-rg
           terraform apply -auto-approve
 
