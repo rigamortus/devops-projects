@@ -48,22 +48,24 @@ jobs:
     needs: terraform_stage_1
 
     steps:
-      #- name: Checkout code
-        #uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          path: azuretask/stagetwo
       
       #- name: azure login
         #uses: azure/login@v1
         #with:
           #creds: '{"clientId":"${{ secrets.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}","subscriptionId":"${{ secrets.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.ARM_TENANT_ID }}"}'
 
-      - name: change directory  
-        run: |
-          cd azuretask/stagetwo
-        env:
-            ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
-            ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
-            ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
-            ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+      #- name: change directory  
+        #run: |
+          #cd azuretask/stagetwo
+        #env:
+            #ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+            #ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+            #ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+            #ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
 
       - name: Setup Packer
         shell: powershell
@@ -96,7 +98,7 @@ jobs:
           ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
           ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
         run: |
-          cd azuretask/stagetwo
+          #cd azuretask/stagetwo
           packer plugins install github.com/hashicorp/azure
           packer hcl2_upgrade /home/runner/work/devops-projects/devops-projects/azuretask/stagetwo/azurepacker.json
           packer build azurepacker.json
