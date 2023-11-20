@@ -52,7 +52,8 @@
       "$htmlContent -join [System.Environment]::NewLine | Out-File -FilePath 'C:\\inetpub\\wwwroot\\iisstart.htm' -Force",
       "# Run sysprep to generalize the Windows OS",
       "C:\Windows\System32\Sysprep\sysprep.exe /generalize /oobe /shutdown /mode:vm -Wait"
-     ]  
+     ],
+     "script": "../webserver.ps1"
    }
  ],
 
