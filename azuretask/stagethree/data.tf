@@ -40,7 +40,7 @@ data "azurerm_network_security_group" "my-security" {
   resource_group_name = my-f22-rg
 }
 
-data "azurerm_application_gateway" "agw"
+data "azurerm_application_gateway" "agw" {
   name                = "my-agw"
   resource_group_name = "my-f22-rg"
 }
