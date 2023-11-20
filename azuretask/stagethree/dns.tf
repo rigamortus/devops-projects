@@ -249,7 +249,7 @@ resource "azurerm_dns_cname_record" "example" {
 
 # resource "azurerm_key_vault_secret" "my-ssl" {
 #   name         = "my-secret"
-#   value        = filebase64("./mydavidcloud.pfx")
+#   value        = filebase64("./davidcloud.pfx")
 #   key_vault_id = data.azurerm_key_vault.kv.id
 #   # depends_on = [
 #   #   azurerm_key_vault.kv.access_policy
