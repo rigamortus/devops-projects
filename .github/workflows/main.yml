@@ -59,44 +59,30 @@ jobs:
       - name: change directory  
         run: |
           cd azuretask/stagetwo
-          
-      - name: Build VM Image
-        uses: azure/build-vm-image@v0
         env:
             ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
             ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
             ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
             ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
-        with:
-          resource-group-name: my-f22-rg
-          location: East US 2
-          #image-builder-template: /home/runner/work/devops-projects/devops-projects/azuretask/stagetwo/azurepacker.json
-          managed-identity: ${{ secrets.MANAGED_ID }}
-          #service-principal: ${{ secrets.ARM_SERVICE_PRINCIPAL }}
-          #client-secret: ${{ secrets.ARM_CLIENT_SECRET }}    
-          source-os-type: 'windows'        
-          source-image: MicrosoftWindowsServer:WindowsServer:2019-Datacenter:latest        
-          customizer-script: |
-            /home/runner/work/devops-projects/devops-projects/azuretask/webserver.ps1
-        #env:
-            #ARM_CLIENT_ID: ${{ secrets.MANAGED_ID }}
-            #ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
-            #ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
-            #ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
 
-      #- name: Setup Packer
-        #run: |
-          #wget https://releases.hashicorp.com/packer/1.9.4/packer_1.9.4_linux_amd64.zip
-          #unzip packer_1.9.4_linux_amd64.zip
-          #sudo mv packer /usr/local/bin/
-          #rm packer_1.9.4_linux_amd64.zip
+      - name: Setup Packer
+        run: |
+          wget https://releases.hashicorp.com/packer/1.9.4/packer_1.9.4_linux_amd64.zip
+          unzip packer_1.9.4_linux_amd64.zip
+          sudo mv packer /usr/local/bin/
+          rm packer_1.9.4_linux_amd64.zip
 
-      #- name: Execute Packer Image Build
-        #run: |
-          #cd azuretask/stagetwo
-          #packer plugins install github.com/hashicorp/azure
-          #packer hcl2_upgrade /home/runner/work/devops-projects/devops-projects/azuretask/stagetwo/azurepacker.json
-          #packer build azurepacker.json
+      - name: Execute Packer Image Build
+        env:
+          ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+          ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+          ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+          ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+        run: |
+          cd azuretask/stagetwo
+          packer plugins install github.com/hashicorp/azure
+          packer hcl2_upgrade /home/runner/work/devops-projects/devops-projects/azuretask/stagetwo/azurepacker.json
+          packer build azurepacker.json
 
   terraform_stage_3:
     runs-on: ubuntu-latest
