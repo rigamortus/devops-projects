@@ -43,20 +43,20 @@ jobs:
           terraform apply -auto-approve
 
   packer_stage_2:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     #if: github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'skipped'
     needs: terraform_stage_1
 
     steps:
-      #- name: Checkout code
-        #uses: actions/checkout@v2
-        #with:
-          #path: azuretask/stagetwo
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          path: azuretask/stagetwo
       
-      #- name: azure login
-        #uses: azure/login@v1
-        #with:
-          #creds: '{"clientId":"${{ secrets.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}","subscriptionId":"${{ secrets.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.ARM_TENANT_ID }}"}'
+      - name: azure login
+        uses: azure/login@v1
+        with:
+          creds: '{"clientId":"${{ secrets.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}","subscriptionId":"${{ secrets.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.ARM_TENANT_ID }}"}'
 
       #- name: change directory  
         #run: |
@@ -68,29 +68,11 @@ jobs:
             #ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
 
       - name: Setup Packer
-        shell: powershell
         run: |
-          #wget https://releases.hashicorp.com/packer/1.9.4/packer_1.9.4_linux_amd64.zip
-          #unzip packer_1.9.4_linux_amd64.zip
-          #sudo mv packer /usr/local/bin/
-          #rm packer_1.9.4_linux_amd64.zip
-          # Define Packer version
-          $packerVersion = "1.9.4"
-    
-          # Define download URL
-          $packerUrl = "https://releases.hashicorp.com/packer/$($packerVersion)/packer_$($packerVersion)_windows_amd64.zip"
-    
-          # Download and unzip Packer
-          Invoke-WebRequest -Uri $packerUrl -OutFile packer.zip
-          Expand-Archive -Path packer.zip -DestinationPath $Env:ProgramFiles\packer -Force
-          Remove-Item -Path packer.zip -Force
-    
-          # Add Packer to the system PATH
-          $env:Path += ";$($Env:ProgramFiles)\packer"
-
-          # Check Packer version
-          packer --version
-
+          wget https://releases.hashicorp.com/packer/1.9.4/packer_1.9.4_linux_amd64.zip
+          unzip packer_1.9.4_linux_amd64.zip
+          sudo mv packer /usr/local/bin/
+          rm packer_1.9.4_linux_amd64.zip
       - name: Execute Packer Image Build
         env:
           ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
@@ -98,12 +80,11 @@ jobs:
           ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
           ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
         run: |
-          cd C:\Users\runner\work\devops-projects\devops-projects\azuretask\stagetwo
-          pwd
+          cd /home/runner/work/devops-projects/devops-projects/azuretask/stagetwo
           packer plugins install github.com/hashicorp/azure
-          #packer hcl2_upgrade /home/runner/work/devops-projects/devops-projects/azuretask/stagetwo/azurepacker.json
-          packer hcl2_upgrade C:\Users\runner\work\devops-projects\devops-projects\azuretask\stagetwo\azurepacker.json
-          packer build C:\Users\runner\work\devops-projects\devops-projects\azuretask\stagetwo\azurepacker.json
+          packer hcl2_upgrade /home/runner/work/devops-projects/devops-projects/azuretask/stagetwo/azurepacker.json
+          #packer hcl2_upgrade C:\Users\runner\work\devops-projects\devops-projects\azuretask\stagetwo\azurepacker.json
+          packer build /home/runner/work/devops-projects/devops-projects/azuretask/stagetwo/azurepacker.json
 
   terraform_stage_3:
     runs-on: ubuntu-latest
