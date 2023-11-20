@@ -15,6 +15,11 @@
 data "azurerm_client_config" "current" {
 }
 
+data "azurerm_image" "search" {
+  name                = "my-image"
+  resource_group_name = "my-f22-rg"
+}
+
 # data "azurerm_key_vault" "kv" {
 #   name                = "benmykv"
 #   resource_group_name = "my-f23-rg"
