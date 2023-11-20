@@ -50,13 +50,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-        with:
-          path: azuretask/stagetwo
       
       - name: azure login
         uses: azure/login@v1
         with:
           creds: '{"clientId":"${{ secrets.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}","subscriptionId":"${{ secrets.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.ARM_TENANT_ID }}"}'
+          allow-no-subscriptions: true
 
       #- name: change directory  
         #run: |
@@ -82,7 +81,7 @@ jobs:
         run: |
           cd azuretask/stagetwo
           packer plugins install github.com/hashicorp/azure
-          packer hcl2_upgrade azurepacker.json
+          #packer hcl2_upgrade azurepacker.json
           #packer hcl2_upgrade C:\Users\runner\work\devops-projects\devops-projects\azuretask\stagetwo\azurepacker.json
           packer build azurepacker.json
 
