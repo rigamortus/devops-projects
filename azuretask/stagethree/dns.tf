@@ -242,7 +242,7 @@ resource "azurerm_dns_zone" "my-public-dns" {
 resource "azurerm_dns_cname_record" "example" {
   name                = "test"
   zone_name           = azurerm_dns_zone.my-public-dns.name
-  resource_group_name = azurerm_resource_group.my-f23-rg.name
+  resource_group_name = data.azurerm_resource_group.my-f23-rg.name
   ttl                 = 300
   record              = "${random_string.azurerm_traffic_manager_profile_dns_config.result}.trafficmanager.net"
 }
@@ -284,7 +284,7 @@ resource "azurerm_key_vault_certificate" "certificate" {
   depends_on   = [azurerm_key_vault_access_policy.key_vault_default_policy]
 
   certificate {
-    contents = filebase64("./mydavidcloud.pfx")
+    contents = filebase64("./davidcloud.pfx")
     password = var.vmpass
   }
 
