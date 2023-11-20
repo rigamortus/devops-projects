@@ -37,7 +37,7 @@ data "azurerm_subnet" "third-subnet" {
 
 data "azurerm_network_security_group" "my-security" {
   name                = "acceptanceTestSecurityGroup1"
-  resource_group_name = my-f22-rg
+  resource_group_name = "my-f22-rg"
 }
 
 data "azurerm_application_gateway" "agw" {
