@@ -51,7 +51,7 @@ resource "azurerm_application_gateway" "agw" {
 
   http_listener {
     name                           = "my-https-listener"
-    frontend_ip_configuration_name = "my-httpsfrontend-ip-configuration"
+    frontend_ip_configuration_name = "my-frontend-ip-configuration"
     frontend_port_name             = "my-httpsfrontend-port"
     protocol                       = "Https"
     ssl_certificate_name           = azurerm_key_vault_certificate.certificate.name
