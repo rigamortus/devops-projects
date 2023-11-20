@@ -142,7 +142,10 @@ jobs:
           azcliversion: 2.0.72
           inlineScript: |
             cd azuretask/stagefour
-            az vmss run-command invoke --name my-vmss --resource-group my-f22-rg --command-id RunShellScript --scripts @scripts/vmname.ps1
+            chmod +x endpoint.sh
+            ./endpoint.sh
+
+            #az vmss run-command invoke --name my-vmss --resource-group my-f22-rg --command-id RunShellScript --scripts @scripts/vmname.ps1
 
       #- name: Execute Azure CLI Command
         #run: |
