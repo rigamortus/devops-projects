@@ -24,7 +24,7 @@ terraform {
     resource_group_name  = "my-f23-rg"
     storage_account_name = "tfstatemy12"
     container_name       = "mytfgithub"
-    key                  = "terraform.tfstate"
+    key                  = "secondterraform.tfstate"
   }
 }
 provider "azurerm" {
