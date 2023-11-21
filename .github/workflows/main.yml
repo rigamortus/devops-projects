@@ -143,10 +143,13 @@ jobs:
           #./endpoint.sh      
       - name: Azure CLI script
         uses: azure/CLI@v1
+        env:
+              subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
         with:
            azcliversion: 2.0.72
            inlineScript: |
              cd azuretask/stagefour
+             az account set --subscription $subscription_id
              chmod +x endpoint.sh
              ./endpoint.sh
 
