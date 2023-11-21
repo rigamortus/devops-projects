@@ -10,5 +10,5 @@ instanceIds=($(az vmss list-instances --resource-group $resourceGroupName --name
 for instanceId in "${instanceIds[@]}"; do
     echo "Running command on VMSS instance $instanceId"
     # Run the command on each instance
-    az vmss run-command invoke --resource-group $resourceGroupName --name $vmssName --command-id RunPowerShellScript --scripts @$scriptPath --instance-id $instanceId
+    az vmss run-command invoke --resource-group $resourceGroupName --name $vmssName --command-id RunPowerShellScript --scripts "$scriptPath" --instance-id $instanceId
 done
