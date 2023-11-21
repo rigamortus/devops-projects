@@ -45,5 +45,5 @@ resource "azurerm_traffic_manager_azure_endpoint" "eastus" {
   profile_id         = azurerm_traffic_manager_profile.my-traffic.id
   target_resource_id = azurerm_public_ip.agw-ip.id
   weight             = 100
-  geo_mappings       = ["GEO-NA", "GEO-AF"]
+  geo_mappings       = ["GEO-NA", "GEO-SA"]
 }
