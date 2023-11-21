@@ -21,40 +21,27 @@ resource "azurerm_subnet" "nor-sec-subnet" {
 }
 
 resource "azurerm_network_interface" "nic" {
-  #count               = 2
-  #name                = "nic-${count.index+1}"
-  name                = "nic-1"
+  count               = 2
+  name                = "nic-${count.index+1}"
   location            = "Norway East"
   resource_group_name = data.azurerm_resource_group.my-f23-rg.name
 
   ip_configuration {
-    name                          = "nic-ipconfig-1"
-    subnet_id                     = azurerm_subnet.nor-subnet.id
-    private_ip_address_allocation = "Dynamic"
-    public_ip_address_id = azurerm_public_ip.noragw-ip.id
-  }
-}
-
-resource "azurerm_network_interface" "secnic" {
-  #count               = 2
-  #name                = "nic-${count.index+1}"
-  name                = "nic-2"
-  location            = "Norway East"
-  resource_group_name = data.azurerm_resource_group.my-f23-rg.name
-
-  ip_configuration {
-    name                          = "nic-ipconfig-2"
+    name                          = "nic-ipconfig-${count.index+1}"
     subnet_id                     = azurerm_subnet.nor-sec-subnet.id
     private_ip_address_allocation = "Dynamic"
+    #public_ip_address_id = azurerm_public_ip.noragw-ip.id
   }
 }
 
+
 resource "azurerm_network_interface_application_gateway_backend_address_pool_association" "nic-assoc" {
-  #count                   = 2
-  network_interface_id    = azurerm_network_interface.secnic.id
-  ip_configuration_name   = "nic-ipconfig-2"
+  count                   = 2
+  network_interface_id    = azurerm_network_interface[count.index].id
+  ip_configuration_name   = "nic-ipconfig-${count.index+1}"
   backend_address_pool_id = one(azurerm_application_gateway.noragw.backend_address_pool).id
 }
+
 
 resource "azurerm_windows_virtual_machine" "vm" {
   count               = 2
@@ -67,7 +54,7 @@ resource "azurerm_windows_virtual_machine" "vm" {
   source_image_id     = data.azurerm_shared_image_version.example.id
 
   network_interface_ids = [
-    azurerm_network_interface.secnic.id,
+    azurerm_network_interface.[count.index].id,
   ]
 
   os_disk {
