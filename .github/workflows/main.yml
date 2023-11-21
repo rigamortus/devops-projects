@@ -149,7 +149,7 @@ jobs:
            azcliversion: 2.0.72
            inlineScript: |
              cd azuretask/stagefour
-             az account set --subscription $subscription_id
+             az account set --subscription "Azure for Students"
              chmod +x endpoint.sh
              ./endpoint.sh
 
