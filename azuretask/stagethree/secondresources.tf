@@ -37,7 +37,7 @@ resource "azurerm_network_interface" "nic" {
 
 resource "azurerm_network_interface_application_gateway_backend_address_pool_association" "nic-assoc" {
   count                   = 2
-  network_interface_id    = azurerm_network_interface[count.index].id
+  network_interface_id    = azurerm_network_interface.nic[count.index].id
   ip_configuration_name   = "nic-ipconfig-${count.index+1}"
   backend_address_pool_id = one(azurerm_application_gateway.noragw.backend_address_pool).id
 }
@@ -54,7 +54,7 @@ resource "azurerm_windows_virtual_machine" "vm" {
   source_image_id     = data.azurerm_shared_image_version.example.id
 
   network_interface_ids = [
-    azurerm_network_interface[count.index].id,
+    azurerm_network_interface.nic[count.index].id,
   ]
 
   os_disk {
