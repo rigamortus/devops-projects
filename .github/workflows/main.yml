@@ -1,5 +1,12 @@
 name: Four-Stage Workflow
-on: [push]
+on: 
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      name:
+        description: 'David'
+        required: true
 
 permissions:
       id-token: write
@@ -162,8 +169,8 @@ jobs:
              
   terraform_stage_5:
     runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_dispatch' }}
     needs: azure_cli_stage_4
-    if: github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' && github.actor == 'rigamortus'
 
     steps:
       - name: Setup Terraform
