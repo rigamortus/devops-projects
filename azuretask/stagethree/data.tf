@@ -40,6 +40,13 @@ data "azurerm_network_security_group" "my-security" {
   resource_group_name = "my-f22-rg"
 }
 
+data "azurerm_shared_image_version" "example" {
+  name                = "0.0.1"
+  image_name          = "my-image"
+  gallery_name        = "my_gallery"
+  resource_group_name = "my-f22-rg"
+}
+
 data "azurerm_application_gateway" "agw" {
   name                = "my-agw"
   resource_group_name = "my-f22-rg"
