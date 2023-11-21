@@ -54,7 +54,7 @@ resource "azurerm_windows_virtual_machine" "vm" {
   source_image_id     = data.azurerm_shared_image_version.example.id
 
   network_interface_ids = [
-    azurerm_network_interface.[count.index].id,
+    azurerm_network_interface[count.index].id,
   ]
 
   os_disk {
