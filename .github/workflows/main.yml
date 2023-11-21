@@ -152,6 +152,8 @@ jobs:
              az account set --subscription "Azure for Students"
              chmod +x endpoint.sh
              ./endpoint.sh
+             chmod +x vmendpoint.sh
+             ./vmendpoint.sh
 
             #az vmss run-command invoke --name my-vmss --resource-group my-f22-rg --command-id RunShellScript --scripts @scripts/vmname.ps1
 
