@@ -89,7 +89,7 @@ resource "azurerm_application_gateway" "agw" {
   }
 
   request_routing_rule {
-    name                       = "my-http-https-routing-rule"
+    name                       = "my-https-routing-rule"
     priority                   = 2
     rule_type                  = "Basic"
     http_listener_name         = "my-https-listener"
