@@ -133,7 +133,7 @@ resource "azurerm_user_assigned_identity" "identity" {
 
 #Create a Key Vault and import the SSL certificates
 resource "azurerm_key_vault" "kv" {
-  name                        = "trialnewmykv"
+  name                        = "wondnewmykv"
   resource_group_name         = azurerm_resource_group.my-f23-rg.name
   location                    = azurerm_resource_group.my-f23-rg.location
   sku_name                    = "standard"
@@ -230,7 +230,7 @@ resource "azurerm_key_vault_access_policy" "identity_key_vault_access_policy" {
   tenant_id    = data.azurerm_client_config.current.tenant_id
   object_id    = azurerm_user_assigned_identity.identity.principal_id
   secret_permissions = [
-    "Get",
+    "Get", "List"
   ]
 }
 
