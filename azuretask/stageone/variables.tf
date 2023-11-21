@@ -9,6 +9,11 @@ variable virtualnet {
   description = "description"
 }
 
+variable norvirtualnet {
+  default = ["10.0.0.0/16"]
+  description = "Norway CIDR"
+}
+
 variable "location" {
   type        = string
   default     = "East US 2"
@@ -23,6 +28,16 @@ variable mysubnetcidr {
 variable mysecsubnetcidr {
   default     = ["192.168.0.0/24"]
   description = "my-sec-subnet-cidr"
+}
+
+variable norsubnetcidr {
+  default     = ["10.0.1.0/24"]
+  description = "norsubnet cidr"
+}
+
+variable norsecsubnetcidr {
+  default     = ["10.0.2.0/24"]
+  description = "nor-sec-subnet-cidr"
 }
 
 variable thirdsubnetcidr {
@@ -41,5 +56,7 @@ variable "tenant_id" {
 
 variable "subscription_id" {
 }
+
+
 
 
