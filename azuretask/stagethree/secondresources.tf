@@ -64,7 +64,7 @@ resource "azurerm_windows_virtual_machine" "vm" {
   size                = "Standard_DS1_v2"
   admin_username      = "azureadmin"
   admin_password      = var.vmpass
-  source_image_id     = data.azurerm_image.search.id
+  source_image_id     = data.azurerm_shared_image_version.example.id
 
   network_interface_ids = [
     azurerm_network_interface.secnic.id,
@@ -245,7 +245,7 @@ resource "azurerm_application_gateway" "noragw" {
   }
 
   request_routing_rule {
-    name                       = "nor-http-https-routing-rule"
+    name                       = "nor-https-routing-rule"
     priority                   = 2
     rule_type                  = "Basic"
     http_listener_name         = "nor-https-listener"
