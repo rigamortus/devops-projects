@@ -94,6 +94,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Create Shared Image Version
+        uses: azure/CLI@v1
+        env:
+              subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+        with:
+           azcliversion: 2.30.0
+           inlineScript: |
+             az account set --subscription "Azure for Students"
+             az sig image-version create --resource-group my-f22-rg --gallery-name my_gallery --gallery-image-definition my-template --gallery-image-version 0.0.1 --managed-image my-image --target-regions "Norway East" "East US 2"
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
         with:
@@ -134,13 +144,8 @@ jobs:
       - name: login to azure 
         uses: azure/login@v1
         with:
-          creds: '{"clientId":"${{ secrets.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}","subscriptionId":"${{ secrets.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.ARM_TENANT_ID }}"}'
-
-      #- name: run final az script
-        #run: |
-          #cd azuretask/stagefour
-          #chmod +x endpoint.sh
-          #./endpoint.sh      
+          creds: '{"clientId":"${{ secrets.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}","subscriptionId":"${{ secrets.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.ARM_TENANT_ID }}"}'    
+      
       - name: Azure CLI script
         uses: azure/CLI@v1
         env:
@@ -154,10 +159,46 @@ jobs:
              ./endpoint.sh
              chmod +x vmendpoint.sh
              ./vmendpoint.sh
+  workflow_run:
+    workflows: ["Terraform Destroy"]
+    types:
+      - manual
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 0.15.5
+          
+      - name: login to azure 
+        uses: azure/login@v1
+        with:
+          creds: '{"clientId":"${{ secrets.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}","subscriptionId":"${{ secrets.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.ARM_TENANT_ID }}"}'
+          allow-no-subscriptions: true
+        env:
+            client_id: ${{ secrets.ARM_CLIENT_ID }}
+            tenant_id: ${{ secrets.ARM_TENANT_ID }}
+            subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
 
-            #az vmss run-command invoke --name my-vmss --resource-group my-f22-rg --command-id RunShellScript --scripts @scripts/vmname.ps1
+      - name: Destroy Resources
+        env:
+         TF_VAR_client_id: ${{ secrets.ARM_CLIENT_ID }}
+         TF_VAR_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}
+         TF_VAR_subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+         TF_VAR_tenant_id: ${{ secrets.ARM_TENANT_ID }}
+         TF_VAR_vmpass: ${{ secrets.TF_VAR_VMPASS }}
+        run: |
+          cd azuretask/stageone
+          terraform init -backend-config="subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}" -backend-config="client_id=${{ secrets.ARM_CLIENT_ID }}" -backend-config="tenant_id=${{ secrets.ARM_TENANT_ID }}" -backend-config="client_secret=${{ secrets.ARM_CLIENT_SECRET }}"
+          terraform destroy -auto-approve
 
-      #- name: Execute Azure CLI Command
-        #run: |
-          #az login --service-principal --tenant ${{ secrets.TENANT_ID }} --client-id ${{ secrets.CLIENT_ID }} --secret ${{ secrets.CLIENT_SECRET }}
-          #az vmss run-command invoke --name your_vmss_name --resource-group your_resource_group --command-id RunShellScript --scripts @scripts/your_powershell_script.ps1
+      - name: Destroy Resources II
+        env:
+         TF_VAR_client_id: ${{ secrets.ARM_CLIENT_ID }}
+         TF_VAR_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}
+         TF_VAR_subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+         TF_VAR_tenant_id: ${{ secrets.ARM_TENANT_ID }}
+         TF_VAR_vmpass: ${{ secrets.TF_VAR_VMPASS }}
+        run: |
+          cd azuretask/stagethree
+          terraform init -backend-config="subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}" -backend-config="client_id=${{ secrets.ARM_CLIENT_ID }}" -backend-config="tenant_id=${{ secrets.ARM_TENANT_ID }}" -backend-config="client_secret=${{ secrets.ARM_CLIENT_SECRET }}"
+          terraform destroy -auto-approve
+      
