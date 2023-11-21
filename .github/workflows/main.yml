@@ -136,19 +136,19 @@ jobs:
         with:
           creds: '{"clientId":"${{ secrets.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}","subscriptionId":"${{ secrets.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.ARM_TENANT_ID }}"}'
 
-      - name: run final az script
-        run: |
-          cd azuretask/stagefour
-          chmod +x endpoint.sh
-          ./endpoint.sh      
-      #- name: Azure CLI script
-        #uses: azure/CLI@v1
-        #with:
-           #azcliversion: 2.0.72
-           #inlineScript: |
-             #cd azuretask/stagefour
-             #chmod +x endpoint.sh
-             #./endpoint.sh
+      #- name: run final az script
+        #run: |
+          #cd azuretask/stagefour
+          #chmod +x endpoint.sh
+          #./endpoint.sh      
+      - name: Azure CLI script
+        uses: azure/CLI@v1
+        with:
+           azcliversion: 2.0.72
+           inlineScript: |
+             cd azuretask/stagefour
+             chmod +x endpoint.sh
+             ./endpoint.sh
 
             #az vmss run-command invoke --name my-vmss --resource-group my-f22-rg --command-id RunShellScript --scripts @scripts/vmname.ps1
 
