@@ -67,17 +67,43 @@ resource "azurerm_application_gateway" "agw" {
     port                  = 80
     protocol              = "Http"
     request_timeout       = 20
+    probe_name            = "myprobe"
+  }
+
+  probe {
+    name                = "myprobe"
+    host                = "127.0.0.1"
+    interval            = 300
+    timeout             = 300
+    protocol            = "Http"
+    path                = "/"
+    unhealthy_threshold = 3
   }
 
   request_routing_rule {
-    name                       = "my-request-routing-rule"
-    priority                   = 9
+    name                        = "my-http-https-routing-rule"
+    priority                    = 1
+    rule_type                   = "Basic"
+    http_listener_name          = "my-http-listener"
+    redirect_configuration_name = "myredirect"
+  }
+
+  request_routing_rule {
+    name                       = "my-http-https-routing-rule"
+    priority                   = 2
     rule_type                  = "Basic"
-    http_listener_name         = "my-http-listener"
+    http_listener_name         = "my-https-listener"
     backend_address_pool_name  = "my-backend-address-pool"
     backend_http_settings_name = "my-backend-http-settings"
   }
 
+  redirect_configuration {
+    name                 = "myredirect"
+    redirect_type        = "Permanent"
+    target_listener_name = "my-https-listener"
+    include_path         = true
+    include_query_string = true
+  }
   ssl_certificate {
     name                = "mydavidcloudxyz"
     key_vault_secret_id = azurerm_key_vault_certificate.certificate.secret_id
@@ -90,6 +116,8 @@ resource "azurerm_application_gateway" "agw" {
     ]
   }
 }
+
+
 
 # resource "azurerm_network_interface_application_gateway_backend_address_pool_association" "example" {
 #   count = 2
