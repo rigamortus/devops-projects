@@ -1,7 +1,7 @@
 #!/bin/bash
 resourceGroupName="my-f22-rg"
 vmssName="my-vmss"
-scriptPath="vname.ps1"
+scriptPath="./vname.ps1"
 
 # Get the instance IDs for the VMSS
 instanceIds=($(az vmss list-instances --resource-group $resourceGroupName --name $vmssName --query '[].instanceId' --output tsv))
