@@ -168,7 +168,7 @@ resource "azurerm_application_gateway" "noragw" {
   # Assign the managed identity to the application gateway
   identity {
     type         = "UserAssigned"
-    identity_ids = [azurerm_user_assigned_identity.identity.id]
+    identity_ids = [data.azurerm_user_assigned_identity.identity.id]
   }
 
   gateway_ip_configuration {
@@ -210,7 +210,7 @@ resource "azurerm_application_gateway" "noragw" {
     frontend_ip_configuration_name = "nor-frontend-ip-configuration"
     frontend_port_name             = "nor-httpsfrontend-port"
     protocol                       = "Https"
-    ssl_certificate_name           = azurerm_key_vault_certificate.certificate.name
+    ssl_certificate_name           = data.azurerm_key_vault_certificate.certificate.name
   }
 
   backend_address_pool {
@@ -262,7 +262,7 @@ resource "azurerm_application_gateway" "noragw" {
   }
   ssl_certificate {
     name                = "mydavidcloudxyz"
-    key_vault_secret_id = azurerm_key_vault_certificate.certificate.secret_id
+    key_vault_secret_id = data.azurerm_key_vault_certificate.certificate.secret_id
   }
 
   # Use the ignore_changes argument to prevent Terraform from overwriting any manual changes
