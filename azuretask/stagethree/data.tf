@@ -44,7 +44,17 @@ data "azurerm_application_gateway" "agw" {
   name                = "my-agw"
   resource_group_name = "my-f22-rg"
 }
-# data "azurerm_key_vault" "kv" {
-#   name                = "benmykv"
-#   resource_group_name = "my-f23-rg"
-# }
+data "azurerm_user_assigned_identity" "identity" {
+  name                = "example-identity"
+  resource_group_name = "my-f22-rg"
+}
+
+data "azurerm_key_vault_certificate" "certificate" {
+  name         = "mydavidcloudxyz"
+  key_vault_id = data.azurerm_key_vault.kv.id
+}
+
+data "azurerm_key_vault" "kv" {
+  name                = "wondnewmykv"
+  resource_group_name = "my-f22-rg"
+}
