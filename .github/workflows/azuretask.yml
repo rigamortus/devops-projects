@@ -94,7 +94,7 @@ jobs:
   terraform_stage_3:
     runs-on: ubuntu-latest
     #if: github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'skipped'
-    needs: packer_stage_2
+    needs: terraform_stage_1
 
     steps:
       - name: Checkout code
