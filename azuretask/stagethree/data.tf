@@ -63,6 +63,6 @@ data "azurerm_key_vault_certificate" "certificate" {
 }
 
 data "azurerm_key_vault" "kv" {
-  name                = "wondnewmykv"
+  name                = "secwondnewmykv"
   resource_group_name = "my-f22-rg"
 }
