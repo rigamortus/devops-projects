@@ -51,7 +51,7 @@ jobs:
 
   packer_stage_2:
     runs-on: ubuntu-latest
-    if: github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'skipped'
+    #if: github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'skipped'
     needs: terraform_stage_1
 
     steps:
