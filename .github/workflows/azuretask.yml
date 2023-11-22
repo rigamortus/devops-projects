@@ -212,5 +212,5 @@ jobs:
         run: |
           cd azuretask/stagethree
           terraform init -backend-config="subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}" -backend-config="client_id=${{ secrets.ARM_CLIENT_ID }}" -backend-config="tenant_id=${{ secrets.ARM_TENANT_ID }}" -backend-config="client_secret=${{ secrets.ARM_CLIENT_SECRET }}"
-          terraform plan -destroy -out azuretask/stagthree/destroyfile
-          terraform destroy -auto-approve
+          terraform plan -destroy -out destroyfile
+          terraform apply destroyfile -auto-approve
