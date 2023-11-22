@@ -1,0 +1,216 @@
+name: Four-Stage Workflow
+on: 
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      name:
+        description: 'David'
+        required: true
+
+permissions:
+      id-token: write
+      contents: read
+
+jobs:
+  terraform_stage_1:
+    runs-on: ubuntu-latest
+    #if: github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'skipped'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 0.15.5  
+          
+      - name: login to azure 
+        uses: azure/login@v1
+        with:
+          creds: '{"clientId":"${{ secrets.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}","subscriptionId":"${{ secrets.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.ARM_TENANT_ID }}"}'
+          allow-no-subscriptions: true
+        env:
+            client_id: ${{ secrets.CLIENT_ID }}
+            tenant_id: ${{ secrets.TENANT_ID }}
+            subscription_id: ${{ secrets.SUBSCRIPTION_ID }}
+            
+      - name: Execute Terraform Stage 1
+        env:
+         TF_VAR_client_id: ${{ secrets.ARM_CLIENT_ID }}
+         TF_VAR_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}
+         TF_VAR_subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+         TF_VAR_tenant_id: ${{ secrets.ARM_TENANT_ID }}
+         TF_VAR_vmpass: ${{ secrets.TF_VAR_VMPASS }}
+         #creds: '{client_id:"${{ secrets.CLIENT_ID }}","client_secret:"${{ secrets.CLIENT_SECRET }}",subscription_id:"${{ secrets.SUBSCRIPTION_ID }}","tenantId":"${{ secrets.TENANT_ID }}"}'
+        run: |
+          cd azuretask/stageone
+          terraform init -backend-config="subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}" -backend-config="client_id=${{ secrets.ARM_CLIENT_ID }}" -backend-config="tenant_id=${{ secrets.ARM_TENANT_ID }}" -backend-config="client_secret=${{ secrets.ARM_CLIENT_SECRET }}"
+          terraform apply -auto-approve
+
+  # packer_stage_2:
+  #   runs-on: ubuntu-latest
+  #   #if: github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'skipped'
+  #   needs: terraform_stage_1
+
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v2
+      
+  #     - name: azure login
+  #       uses: azure/login@v1
+  #       with:
+  #         creds: '{"clientId":"${{ secrets.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}","subscriptionId":"${{ secrets.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.ARM_TENANT_ID }}"}'
+  #         allow-no-subscriptions: true
+
+  #     - name: change directory  
+  #       run: |
+  #         cd azuretask/stagetwo
+  #       env:
+  #           ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+  #           ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+  #           ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+  #           ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+
+      # - name: Setup Packer
+      #   run: |
+      #     wget https://releases.hashicorp.com/packer/1.9.4/packer_1.9.4_linux_amd64.zip
+      #     unzip packer_1.9.4_linux_amd64.zip
+      #     sudo mv packer /usr/local/bin/
+      #     rm packer_1.9.4_linux_amd64.zip
+      # - name: Execute Packer Image Build
+      #   env:
+      #     ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+      #     ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+      #     ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+      #     ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+      #   run: |
+      #     cd azuretask/stagetwo
+      #     packer plugins install github.com/hashicorp/azure
+      #     packer hcl2_upgrade azurepacker.json
+      #     packer build azurepacker.json
+
+  terraform_stage_3:
+    runs-on: ubuntu-latest
+    #if: github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'skipped'
+    needs: packer_stage_2
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        
+      - name: login to azure 
+        uses: azure/login@v1
+        with:
+          creds: '{"clientId":"${{ secrets.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}","subscriptionId":"${{ secrets.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.ARM_TENANT_ID }}"}'
+          allow-no-subscriptions: true
+        env:
+            client_id: ${{ secrets.ARM_CLIENT_ID }}
+            tenant_id: ${{ secrets.ARM_TENANT_ID }}
+            subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+
+      # - name: Create Shared Image Version
+      #   uses: azure/CLI@v1
+      #   env:
+      #         subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+      #   with:
+      #      azcliversion: 2.30.0
+      #      inlineScript: |
+      #        az account set --subscription "Azure for Students"
+      #        az sig image-version create --resource-group my-f22-rg --gallery-name my_gallery --gallery-image-definition my-template --gallery-image-version 0.0.1 --managed-image my-image --target-regions "Norway East" "East US 2"
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 0.15.5
+
+      - name: Execute Terraform Stage 3
+        env:
+         TF_VAR_client_id: ${{ secrets.ARM_CLIENT_ID }}
+         TF_VAR_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}
+         TF_VAR_subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+         TF_VAR_tenant_id: ${{ secrets.ARM_TENANT_ID }}
+         TF_VAR_vmpass: ${{ secrets.TF_VAR_VMPASS }}
+        run: |
+          cd azuretask/stagethree
+          terraform init -backend-config="subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}" -backend-config="client_id=${{ secrets.ARM_CLIENT_ID }}" -backend-config="tenant_id=${{ secrets.ARM_TENANT_ID }}" -backend-config="client_secret=${{ secrets.ARM_CLIENT_SECRET }}"
+          #terraform import azurerm_resource_group.my-f23-rg /subscriptions/6ea6f9f7-0a28-45a1-b63d-c045d73026f2/resourceGroups/my-f23-rg
+          terraform apply -auto-approve
+
+  azure_cli_stage_4:
+    runs-on: ubuntu-latest
+    #if: github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'skipped'
+    needs: terraform_stage_3
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        
+      - name: login to azure 
+        uses: azure/login@v1
+        with:
+          creds: '{"clientId":"${{ secrets.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}","subscriptionId":"${{ secrets.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.ARM_TENANT_ID }}"}'    
+      
+      - name: Azure CLI script
+        uses: azure/CLI@v1
+        env:
+              subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+        with:
+           azcliversion: 2.30.0
+           inlineScript: |
+             cd azuretask/stagefour
+             az account set --subscription "Azure for Students"
+             chmod +x endpoint.sh
+             ./endpoint.sh
+             chmod +x vmendpoint.sh
+             ./vmendpoint.sh
+             
+  terraform_stage_5:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_dispatch' }}
+    needs: azure_cli_stage_4
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 0.15.5
+          
+      - name: login to azure 
+        uses: azure/login@v1
+        with:
+          creds: '{"clientId":"${{ secrets.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}","subscriptionId":"${{ secrets.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.ARM_TENANT_ID }}"}'
+          allow-no-subscriptions: true
+        env:
+            client_id: ${{ secrets.ARM_CLIENT_ID }}
+            tenant_id: ${{ secrets.ARM_TENANT_ID }}
+            subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+
+      - name: Destroy Resources
+        env:
+         TF_VAR_client_id: ${{ secrets.ARM_CLIENT_ID }}
+         TF_VAR_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}
+         TF_VAR_subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+         TF_VAR_tenant_id: ${{ secrets.ARM_TENANT_ID }}
+         TF_VAR_vmpass: ${{ secrets.TF_VAR_VMPASS }}
+        run: |
+          cd azuretask/stageone
+          terraform init -backend-config="subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}" -backend-config="client_id=${{ secrets.ARM_CLIENT_ID }}" -backend-config="tenant_id=${{ secrets.ARM_TENANT_ID }}" -backend-config="client_secret=${{ secrets.ARM_CLIENT_SECRET }}"
+          terraform plan -destroy -out azuretask/stagethree/destroyfile
+
+      - name: Destroy Resources II
+        env:
+         TF_VAR_client_id: ${{ secrets.ARM_CLIENT_ID }}
+         TF_VAR_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}
+         TF_VAR_subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+         TF_VAR_tenant_id: ${{ secrets.ARM_TENANT_ID }}
+         TF_VAR_vmpass: ${{ secrets.TF_VAR_VMPASS }}
+        run: |
+          cd azuretask/stagethree
+          terraform init -backend-config="subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}" -backend-config="client_id=${{ secrets.ARM_CLIENT_ID }}" -backend-config="tenant_id=${{ secrets.ARM_TENANT_ID }}" -backend-config="client_secret=${{ secrets.ARM_CLIENT_SECRET }}"
+          terraform plan -destroy -out azuretask/stagthree/destroyfile
+          terraform destroy -auto-approve
