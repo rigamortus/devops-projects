@@ -191,7 +191,7 @@ jobs:
             tenant_id: ${{ secrets.ARM_TENANT_ID }}
             subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
 
-      - name: Destroy Resources II
+      - name: Destroy Resources I
         env:
          TF_VAR_client_id: ${{ secrets.ARM_CLIENT_ID }}
          TF_VAR_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}
@@ -217,7 +217,7 @@ jobs:
           terraform import azurerm_image.myimage /subscriptions/6ea6f9f7-0a28-45a1-b63d-c045d73026f2/resourceGroups/my-f22-rg/providers/Microsoft.Compute/images/my-image
           terraform import azurerm_shared_image_version.example /subscriptions/6ea6f9f7-0a28-45a1-b63d-c045d73026f2/resourceGroups/my-f22-rg/providers/Microsoft.Compute/galleries/my_gallery/images/my-template/versions/0.0.1
       
-      - name: Destroy Resources
+      - name: Destroy Resources II
         env:
          TF_VAR_client_id: ${{ secrets.ARM_CLIENT_ID }}
          TF_VAR_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}
@@ -226,6 +226,19 @@ jobs:
          TF_VAR_vmpass: ${{ secrets.TF_VAR_VMPASS }}
         run: |
           cd azuretask/stagefive
+          terraform init -backend-config="subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}" -backend-config="client_id=${{ secrets.ARM_CLIENT_ID }}" -backend-config="tenant_id=${{ secrets.ARM_TENANT_ID }}" -backend-config="client_secret=${{ secrets.ARM_CLIENT_SECRET }}"
+          terraform plan -destroy -out ../stagethree/destroyfile
+          terraform apply ../stagethree/destroyfile
+          
+      - name: Destroy Resources III
+        env:
+         TF_VAR_client_id: ${{ secrets.ARM_CLIENT_ID }}
+         TF_VAR_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}
+         TF_VAR_subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+         TF_VAR_tenant_id: ${{ secrets.ARM_TENANT_ID }}
+         TF_VAR_vmpass: ${{ secrets.TF_VAR_VMPASS }}
+        run: |
+          cd azuretask/stageone
           terraform init -backend-config="subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}" -backend-config="client_id=${{ secrets.ARM_CLIENT_ID }}" -backend-config="tenant_id=${{ secrets.ARM_TENANT_ID }}" -backend-config="client_secret=${{ secrets.ARM_CLIENT_SECRET }}"
           terraform plan -destroy -out ../stagethree/destroyfile
           terraform apply ../stagethree/destroyfile
