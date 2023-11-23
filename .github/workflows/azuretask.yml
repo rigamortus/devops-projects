@@ -47,7 +47,7 @@ jobs:
         run: |
           cd azuretask/stageone
           terraform init -backend-config="subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}" -backend-config="client_id=${{ secrets.ARM_CLIENT_ID }}" -backend-config="tenant_id=${{ secrets.ARM_TENANT_ID }}" -backend-config="client_secret=${{ secrets.ARM_CLIENT_SECRET }}"
-          terraform import azurerm_key_vault_certificate.certificate "https://secwondnewmykv.vault.azure.net/certificates/mydavidcloudxyz/35a511ea98fc4cb7b4dc2aa519262f13"
+          #terraform import azurerm_key_vault_certificate.certificate "https://secwondnewmykv.vault.azure.net/certificates/mydavidcloudxyz/35a511ea98fc4cb7b4dc2aa519262f13"
           terraform apply -auto-approve
 
   packer_stage_2:
