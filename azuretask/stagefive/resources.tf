@@ -10,6 +10,7 @@ resource "azurerm_shared_image_version" "example" {
   image_name          = "my-template"
   resource_group_name = "my-f22-rg"
   location            = "East US 2"
+  managed_image_id    = azurerm_image.myimage.id
 
   target_region {
     name                   = "East US 2"
