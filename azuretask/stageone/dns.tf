@@ -208,7 +208,7 @@ resource "azurerm_key_vault_access_policy" "key_vault_default_policy" {
   object_id    = data.azurerm_client_config.current.object_id
 
   lifecycle {
-    create_before_destroy = true
+    create_before_destroy = false
   }
   certificate_permissions = [
     "Backup", "Create", "Delete", "DeleteIssuers", "Get", "GetIssuers", "Import", "List", "ListIssuers", "ManageContacts", "ManageIssuers", "Purge", "Recover", "Restore", "SetIssuers", "Update"
@@ -230,7 +230,7 @@ resource "azurerm_key_vault_access_policy" "identity_key_vault_access_policy" {
   tenant_id    = data.azurerm_client_config.current.tenant_id
   object_id    = azurerm_user_assigned_identity.identity.principal_id
   secret_permissions = [
-    "Get", "List"
+    "Get", "List", "Recover"
   ]
 }
 
