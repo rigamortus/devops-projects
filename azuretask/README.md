@@ -207,4 +207,4 @@ terraform apply ../stagethree/destroyfile
 
 ## Github Workflow
 
-![GithubWorkflow](Githubworkflow.png)
+![GithubWorkflow](images/Githubworkflow.png)
