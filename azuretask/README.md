@@ -176,7 +176,7 @@ done
 ![VM1](images/EastUS21.png)
 ![VM2](images/NorwayEast1.png)
 
-- Using Windscribe VPN and changing my IP to one from Atlanta, USA and accessing the same FQDN, I was routed to the VMSS in East US 2. This indicates that the traffic manager geo-routing rule and apllication gateways in both regions was implemented properly.
+- Using Windscribe VPN and changing my IP to one from Atlanta, USA and accessing the same FQDN, I was routed to the VMSS in East US 2. This indicates that the traffic manager geo-routing rule and aplication gateways in both regions were implemented properly.
 
 ![VMSS1](images/EastUS22.png)
 ![VMSS2](images/NorwayEast2.png)
