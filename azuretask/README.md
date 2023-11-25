@@ -6,7 +6,7 @@ Azure services used in this project include resource groups, virtual machines, v
 
 ## Website Architecture
 
-![Architecture diagram](Architecture.png)
+![Architecture diagram](images/Architecture.png)
 
 To host the website, two virtual networks with CIDRs "192.168.0.0/16" (__East US 2__) and "10.0.0.0/16" (__Norway East__) were created. Each virtual network had two subnets each with a subnet mask of "/24". A load balancer for each region was created and served as the Azure endpoint for the traffic manager. An Azure DNS zone "mydavidcloud.xyz" was also created with CNAME records that pointed the subdomain "__test.mydavidcloud.xyz__" to the address for the traffic manager profile . A virtual machine scale set with two instances in East US 2  and two virtual machines in Norway East hosted the website.
 
@@ -173,13 +173,13 @@ done
 
 - The final website architecture was accessible with the FQDN "__test.mydavidcloud.xyz__."  From my location (__Nigeria__, __Africa__), I was routed to the VMs in Norway East. The application gateway also used a round robin method alternating between VM1 and VM2.
 
-![VM1](EastUS21.png)
-![VM2](NorwayEast1.png)
+![VM1](images/EastUS21.png)
+![VM2](images/NorwayEast1.png)
 
 - Using Windscribe VPN and changing my IP to one from Atlanta, USA and accessing the same FQDN, I was routed to the VMSS in East US 2. This indicates that the traffic manager geo-routing rule and apllication gateways in both regions was implemented properly.
 
-![VMSS1](EastUS22.png)
-![VMSS2](NorwayEast2.png)
+![VMSS1](images/EastUS22.png)
+![VMSS2](images/NorwayEast2.png)
 
 ### Stage Five: Terraform Destroy
 
