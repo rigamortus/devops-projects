@@ -8,11 +8,11 @@ Azure services used in this project include resource groups, virtual machines, v
 
 ![Architecture diagram](images/Architecture.png)
 
-To host the website, two virtual networks with CIDRs "192.168.0.0/16" (__East US 2__) and "10.0.0.0/16" (__Norway East__) were created. Each virtual network had two subnets each with a subnet mask of "/24". A load balancer for each region was created and served as the Azure endpoint for the traffic manager. An Azure DNS zone "mydavidcloud.xyz" was also created with CNAME records that pointed the subdomain "__test.mydavidcloud.xyz__" to the address for the traffic manager profile . A virtual machine scale set with two instances in East US 2  and two virtual machines in Norway East hosted the website.
+To host the website, two virtual networks with CIDRs "192.168.0.0/16" (__East US 2__) and "10.0.0.0/16" (__Norway East__) were created. Each virtual network had two subnets each with a subnet mask of "/24". A load balancer for each region was created and served as the Azure endpoint for the traffic manager. An Azure DNS zone "__mydavidcloud.xyz__" was also created with CNAME records that pointed the subdomain "__test.mydavidcloud.xyz__" to the address for the traffic manager profile . A __virtual machine scale set__ with two instances in __East US 2__  and __two virtual machines__ in __Norway East__ hosted the website.
 
 ## SSL Certificate
 
-- A self-signed certificate was created using OpenSSL. The __.key__ and __.crt__ files were converted to __.pfx__ which is the format required for SSL termination in Azure Application Gateway.
+- A self-signed certificate was created using __OpenSSL__. The __.key__ and __.crt__ files were converted to __.pfx__ which is the format required for SSL termination in Azure Application Gateway.
 
 ```bash
 openssl req -new -newkey rsa:2048 -days 365 -nodes -x509 -keyout davidcloud.key -out davidcloud.crt
@@ -22,7 +22,7 @@ openssl pkcs12 -export -out davidcloud.pfx -inkey davidcloud.key -in davidcloud.
 
 ## Azure Service Principal
 
-- First, an Azure Service Principal was created with owner permissions to grant Terraform and Github Actions access to my Azure for Students subscription using the Azure CLI on my command line.
+- An Azure Service Principal was created with owner permissions to grant Terraform and Github Actions access to my Azure for Students subscription using the Azure CLI on my command line.
 
 ```bash
 az ad sp create-for-rbac --query "{ client_id: appId client_secret: password, tenant_id: tenant }"
@@ -32,7 +32,7 @@ The above command yielded Client Secret and Client ID. Tenant ID and Subscriptio
 
 ## CI/CD
 
-Github Actions was my preferred CI/CD tool to trigger the terraforn files. In the workflow file (__/.github/workflows/azuretask.yml__), I implemented a five-stage task. The first four stages were configured to execute on push to the main branch while the final stage (resource destruction) only executes after entry of the passphrase '__David__'.
+Github Actions was my preferred CI/CD tool to trigger the Terraform files. In the workflow file (__/.github/workflows/azuretask.yml__), I implemented a five-stage task. The first four stages were configured to execute on push to the main branch while the final stage (resource destruction) only executes after entry of the passphrase '__David__'.
 
 ### Stage One
 
@@ -62,7 +62,7 @@ provider "azurerm" {
 }
 ```
 
-- All resources for the website architecture in East US 2 were implemented in Stage One except the virtual machine scale set. These include:
+- All resources for the website architecture in East US 2 were provisioned in Stage One except the virtual machine scale set. These include:
 
 1. A virtual network
 1. Two subnets
@@ -71,7 +71,7 @@ provider "azurerm" {
 1. A NAT gateway for internet access for the VMSS subnet (VMSS were placed in a private subnet)
 1. Two public IPV4 adresses (One each for the AGW and NAT Gateway)
 1. A Network Security Group associated with the AGW subnet to allow access from Azure Loadbalancer and HTTP and HTTPS access.
-1. Shared Image Gallery and Shared Image Version.
+1. Azure Shared Image Gallery and Shared Image Version.
 1. A Traffic Manager Profile with Geo Routing Implemented
 1. A Traffic Manager Azure Endpoint pointing to the public IPV4 address associated with the AGW in East US 2 and that routes traffic from North and South America to the East US 2  region.
 1. A key vault to store the SSL certificate
@@ -92,7 +92,7 @@ terraform apply -auto-approve
 - Since Terraform's __azurerm_image__ resource cannot build images without defects, I opted for another Hashicorp tool: __Packer__.
 
 - A JSON file (__azurepacker.json__) was created for the build.
-My custom image was built using the "2019-Datacenter Windows Server" image as the base image. An inline powershell script was also executed to install IIS web-server, place a custom HTML file in the default webserver path, and generalize the VM in preparation for capturing. The HTML file was configured with placeholders that would later be modified to display details about the VM.
+My custom image was built using the "2019-Datacenter Windows Server" image as the base image. An inline powershell script was also executed to install IIS web-server, place a custom HTML file in the default webserver path, and generalize the VM in preparation for image capturing. The HTML file was configured with placeholders that would later be modified to display details about the VM.
 
 - During provisioning, Packer created a VM with the base image and executed the powershell script against the VM using WinRM as the connector. VM was deleted after the image was created.
 
@@ -153,14 +153,14 @@ for instanceId in "${instanceIds[@]}"; do
 done
 ```
 
-- __vmendpoint.sh__ also executed the same Powershell script (__vmname.ps1__) with the Norway East virtual machines as targets. It also initially retrieves VM names rather than instanceIds.
+- __vmendpoint.sh__ also executed the same Powershell script (__vmname.ps1__) with the Norway East virtual machines as targets, with the caveat that it initially retrieves VM names rather than instanceIds.
 
 ```bash
 #!/bin/bash
 resourceGroupName="my-f22-rg"
 scriptPath="vmname.ps1"
 
-# Get the instance IDs for the VMs
+# Get the instance names for the VMs
 vmNames=($(az vm list --resource-group my-f22-rg --query '[].name' --output tsv))
 
 # Loop through each instance and run the command
@@ -171,6 +171,7 @@ for vmName in "${vmNames[@]}"; do
 done
 ```
 
+### Results
 - The final website architecture was accessible with the FQDN "__test.mydavidcloud.xyz__."  From my location (__Nigeria__, __Africa__), I was routed to the VMs in Norway East. The application gateway also used a round robin method alternating between VM1 and VM2.
 
 ![VM1](images/EastUS21.png)
@@ -185,7 +186,7 @@ done
 
 - This step was made to trigger only if the passphrase 'David' was entered during workflow execution.
 
-- The shared image version created with the Azure CLI and the image created with Packer were also imported using __terraform import__.
+- The shared image version created with the Azure CLI and the image created with Packer were also imported using __terraform import__. Importing lets Terraform manage resources created through other means and enables complete resource destruction.
 
 ```bash
 terraform import azurerm_image.myimage /subscriptions/6ea6f9f7-0a28-45a1-b63d-c045d73026f2/resourceGroups/my-f22-rg/providers/Microsoft.Compute/images/my-image
