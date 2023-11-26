@@ -1,4 +1,4 @@
-# Creating a Highly Available Two-Tier Architecture Website on Azure with DNS Geo-Routing Using Terraform and Github Actions
+# Creating a Highly Available Two-Tier Website Architecture on Azure with DNS Geo-Routing Using Terraform and Github Actions
 
 The primary objective of this project was to deploy and configure website architecture on Microsoft's Azure platform. Rather than implement this infrastructure manually using the Azure portal, the website infrastructure was automated using Terraform for provisioning and Github Actions as the CI/CD tool.
 
