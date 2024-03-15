@@ -22,7 +22,7 @@ openssl pkcs12 -export -out davidcloud.pfx -inkey davidcloud.key -in davidcloud.
 
 ## Azure Service Principal
 
-- An Azure Service Principal was created with owner permissions to grant Terraform and Github Actions access to my Azure for Students subscription using the Azure CLI on my command line.
+- An Azure Service Principal was created with owner permissions to grant Terraform and Github Actions access to my Azure for Students subscription using the Azure CLI.
 
 ```bash
 az ad sp create-for-rbac --query "{ client_id: appId client_secret: password, tenant_id: tenant }"
