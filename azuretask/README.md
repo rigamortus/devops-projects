@@ -8,7 +8,7 @@ Azure services used in this project include resource groups, virtual machines, v
 
 ![Architecture diagram](images/Architecture.png)
 
-To host the website, two virtual networks with CIDRs "192.168.0.0/16" (__East US 2__) and "10.0.0.0/16" (__Norway East__) were created. Each virtual network had two subnets each with a subnet mask of "/24". A load balancer for each region was created and served as the Azure endpoint for the traffic manager. An Azure DNS zone "__mydavidcloud.xyz__" was also created with CNAME records that pointed the subdomain "__test.mydavidcloud.xyz__" to the address for the traffic manager profile . A __virtual machine scale set__ with two instances in __East US 2__  and __two virtual machines__ in __Norway East__ hosted the website.
+To host the website, two virtual networks with CIDRs "192.168.0.0/16" (__East US 2__) and "10.0.0.0/16" (__Norway East__) were created. Each virtual network had two subnets each with a subnet mask of "/24". A load balancer for each region was created and served as the Azure endpoint for the traffic manager. An Azure DNS zone "__mydavidcloud.xyz__" was also created with CNAME records that pointed the subdomain "__test.mydavidcloud.xyz__" to the address for the traffic manager profile. A __virtual machine scale set__ with two instances in __East US 2__  and __two virtual machines__ in __Norway East__ hosted the website.
 
 ## SSL Certificate
 
